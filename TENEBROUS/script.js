@@ -18,7 +18,7 @@ const clockEl      = document.getElementById('clock');
 /* ====== URLs you wanted ====== */
 const MUSIC_URL = "https://google.com";                  // placeholder
 const STORE_URL = "https://store.liveoffsilence.com";    // real store
-const HOME_URL  = "/";                                   // shutdown -> home page
+const HOME_URL  = "https://liveoffsilence.com";                                   // shutdown -> home page
 
 let zTop = 1000;
 
