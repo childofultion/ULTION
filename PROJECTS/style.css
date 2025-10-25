@@ -134,3 +134,41 @@ body::after{content:""; position:fixed; inset:-50%; pointer-events:none; opacity
     top: 60%;
   }
 }
+/* ✅ Better mobile layout fix */
+@media (max-width: 600px) {
+
+  html, body {
+    height: 100dvh; /* dynamic viewport height fixes Safari bar issues */
+    overflow: hidden;
+  }
+
+  .scene {
+    top: 66%; /* move all content lower */
+    height: 100dvh;
+    transform: translate(-50%, -50%);
+  }
+
+  .carousel {
+    width: 100vw !important;
+    height: 72vh !important; /* more visible space */
+  }
+
+  .card.center {
+    transform: translate3d(0, -5px, 440px) scale(1.18) !important;
+  }
+
+  .floor {
+    bottom: 12%;
+  }
+}
+
+/* Ultra small phones */
+@media (max-width: 380px) {
+  .scene {
+    top: 70%;
+  }
+  :root {
+    --card-w:125px;
+    --card-h:170px;
+  }
+}
