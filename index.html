@@ -6,121 +6,112 @@
 <title>ULTION</title>
 
 <style>
-  /* ===== BASE ===== */
   body {
-    background: #000;
-    color: #f2f2f2;
+    background:#000;
+    color:#f2f2f2;
     font-family: Consolas, "Courier New", monospace;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100vh; 
-    margin: 0;
-    text-align: center;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh; 
+    margin:0;
+    text-align:center;
   }
 
   #terminal {
-    white-space: pre-wrap;
-    line-height: 2.4rem;
-    font-size: 2rem; /* 🔥 BIGGER main text + intro */
-    text-shadow: 0 0 6px rgba(255,255,255,0.35);
+    white-space:pre;
+    font-size:2.2rem;  /* BIGGER intro + menu */
+    line-height:2.8rem;
+    text-shadow:0 0 6px rgba(255,255,255,0.3);
   }
 
-  /* Menu commands */
   .command {
-    display: block;
-    margin: 0.9rem 0;
-    cursor: pointer;
-    color: #f2f2f2;
-    text-decoration: none;
-    position: relative;
-    padding-left: 1.4rem;
-    font-size: 2rem; /* match intro size */
-    opacity: 0;
-    transition: opacity 0.4s ease; /* fade in */
+    cursor:pointer;
+    opacity:0.85;
+    display:block;
+    margin:10px 0;
+    position:relative;
+    padding-left:1.5ch;
+    transition:opacity .3s ease;
   }
 
   .command::before {
-    content: "> ";
-    position: absolute;
-    left: 0;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+    content:">";
+    position:absolute;
+    left:0;
+    opacity:0;
+    transition:opacity .3s ease;
   }
 
   .command:hover::before {
-    opacity: 1;
+    opacity:0.9;
   }
 
   .command:hover {
-    opacity: 1;
-    text-shadow: 0 0 10px #fff;
+    text-shadow:0 0 10px #fff;
+    opacity:1;
   }
 </style>
-
 </head>
 <body>
 
 <div id="terminal"></div>
 
 <script>
-  const term = document.getElementById("terminal");
-  const intro = "WELCOME TO ULTION_";
-  const pages = [
-    { text:"ABOUT",     url:"ABOUT/index.html" },
-    { text:"PROJECTS",  url:"PROJECTS/index.html" },
-    { text:"STORE",     url:"https://store.childofultion.com" },
-    { text:"TENEBROUS", url:"TENEBROUS/index.html" }
-  ];
+const term = document.getElementById("terminal");
+const intro = "WELCOME TO ULTION";
+const pages = [
+  { text:"ABOUT",     url:"ABOUT/index.html" },
+  { text:"PROJECTS",  url:"PROJECTS/index.html" },
+  { text:"STORE",     url:"https://store.childofultion.com" },
+  { text:"TENEBROUS", url:"TENEBROUS/index.html" }
+];
 
-  let i = 0;
+let i = 0;
 
-  function typeIntro() {
-    if(i < intro.length){
-      term.textContent += intro[i++];
-      setTimeout(typeIntro, 100);
-    } else {
-      setTimeout(removeCursor, 400);
-    }
+function typeIntro() {
+  if (i < intro.length) {
+    term.textContent += intro[i++];
+    setTimeout(typeIntro, 100);
+  } else {
+    setTimeout(() => deleteIntro(intro.length), 800);
   }
+}
 
-  function removeCursor() {
-    term.textContent = term.textContent.replace("_", "");
-    setTimeout(clearIntro, 600);
+function deleteIntro(len) {
+  if (len > 0) {
+    term.textContent = intro.substring(0, len - 1);
+    setTimeout(() => deleteIntro(len - 1), 50);
+  } else {
+    term.textContent = "";
+    setTimeout(() => typeMenu(0), 200);
   }
+}
 
-  function clearIntro() {
-    if(i > 0){
-      i--;
-      term.textContent = intro.slice(0, i);
-      setTimeout(clearIntro, 45);
-    } else {
-      setTimeout(showMenu, 300);
-    }
+function typeMenu(index) {
+  if (index >= pages.length) return;
+
+  const cmd = document.createElement("div");
+  cmd.className = "command";
+  term.appendChild(cmd);
+
+  typeCommand(cmd, pages[index].text, 0, () => {
+    cmd.addEventListener("click", () => window.location = pages[index].url);
+    typeMenu(index + 1);
+  });
+}
+
+function typeCommand(element, text, j, done) {
+  if (j < text.length) {
+    element.textContent += text[j];
+    setTimeout(() => typeCommand(element, text, j + 1, done), 90);
+  } else {
+    done();
   }
+}
 
-  function showMenu() {
-    term.innerHTML = "";
-    pages.forEach((info, index) => {
-      const link = document.createElement("a");
-      link.textContent = info.text;
-      link.href = info.url;
-      link.classList.add("command");
-
-      link.addEventListener("click", e => {
-        e.preventDefault();
-        window.location.href = info.url;
-      });
-
-      term.appendChild(link);
-
-      setTimeout(() => {
-        link.style.opacity = 1; // fade in per-item
-      }, 300 * index);
-    });
-  }
-
-  typeIntro();
+// Start animation
+typeIntro();
 </script>
 
 </body>
