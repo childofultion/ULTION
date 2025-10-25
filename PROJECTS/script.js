@@ -1,103 +1,133 @@
-// 360° carousel + video lightbox (mobile friendly, desktop safe)
-(function () {
-  const carousel  = document.getElementById('carousel');
+// ------- PROJECTS Carousel: full 360° ring (no gaps) + mobile centering -------
+(() => {
+  const carousel = document.getElementById('carousel');
   if (!carousel) return;
 
-  const cards     = Array.from(carousel.children);
-  const total     = cards.length;
-
-  // Adaptive radius so the center card doesn't blow up on phones
-  function computeRadius() {
-    const vw = Math.min(window.innerWidth, (window.screen && screen.width) || window.innerWidth);
-    if (vw <= 380) return 220;
-    if (vw <= 600) return 260;
-    if (vw <= 900) return 360;
-    return 480;
+  // Ensure at least 7 panels so the ring looks full even if you only author 3-5.
+  const MIN_CARDS = 7;
+  const originals = Array.from(carousel.children);
+  while (carousel.children.length < MIN_CARDS) {
+    const clone = originals[(carousel.children.length) % originals.length].cloneNode(true);
+    clone.classList.add('clone');
+    carousel.appendChild(clone);
   }
-  let RADIUS = computeRadius();
 
-  // Feel
-  const SENSITIVITY = 0.0036; // px -> index
-  const LERP        = 0.18;
-  const FRICTION    = 0.95;
-  const SNAP        = 0.14;
+  let cards = Array.from(carousel.children);
+  let total = cards.length;
 
-  const IDLE_DELAY_MS = 4000;
-  const AUTO_SPEED    = 0.003;
-
-  const stepDeg = 360 / total;
-  let current = 0, target = 0, dragging = false;
-  let startX = 0, startIndex = 0, lastX = 0, velocity = 0, movedPx = 0, suppressClick = false;
-
+  // Lightbox refs
   const lightbox = document.getElementById('lightbox');
   const videoEl  = document.getElementById('lightboxVideo');
   const closeBtn = document.getElementById('closeVideo');
   const backdrop = document.getElementById('backdrop');
 
+  // ---- Feel / physics (desktop vs mobile tuned in getConfig()) ----
+  let cfg = getConfig();
+
+  function getConfig() {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+
+    // radius based on viewport; tuned for no clipping and nice perspective
+    const RADIUS = Math.max(280, Math.min(520, Math.min(w, 980) * 0.58)); // 58% of width
+
+    // scale boost for the center card (visual pop)
+    const CENTER_BOOST = w < 600 ? 0.16 : 0.12;
+
+    return {
+      RADIUS,
+      CENTER_BOOST,
+      SENSITIVITY: 0.0036,
+      LERP: 0.18,
+      FRICTION: 0.95,
+      SNAP: 0.14,
+      AUTO_SPEED: 0.003,
+      IDLE_DELAY_MS: 4000
+    };
+  }
+
+  // Derived
+  let stepDeg = 360 / total;
+  let current = 0;
+  let target  = 0;
+  let velocity = 0;
+
+  // drag state
+  let dragging = false, startX = 0, lastX = 0, startIndex = 0, movedPx = 0, suppressClick = false;
+
+  // idle autorotate
   let idle = false, idleTimer = null;
-  const wrapIndex = n => ((n % total) + total) % total;
-  const shortestDelta = (a,b) => { let d=b-a; if(d>total/2)d-=total; if(d<-total/2)d+=total; return d; };
+  function isLightboxOpen(){ return lightbox && lightbox.classList.contains('active'); }
+  function bumpActivity(){
+    idle = false;
+    if (idleTimer) clearTimeout(idleTimer);
+    idleTimer = setTimeout(() => { if (!dragging && !isLightboxOpen()) idle = true; }, cfg.IDLE_DELAY_MS);
+  }
 
-  function render(idx){
-    for(let k=0;k<total;k++){
-      const angleDeg = (k*stepDeg) - (idx*stepDeg);
-      const rad  = angleDeg * Math.PI/180;
+  const wrap = (n, m) => ((n % m) + m) % m;
+  const shortestDelta = (a,b) => {
+    let d = b - a;
+    if (d >  total/2) d -= total;
+    if (d < -total/2) d += total;
+    return d;
+  };
 
-      const x    = Math.sin(rad) * RADIUS * 0.55;
-      const z    = Math.cos(rad) * RADIUS;
-      const rotY = angleDeg * 0.45;
+  // Position + style each card for index "idx"
+  function render(idx) {
+    for (let k = 0; k < total; k++) {
+      const angleDeg = (k * stepDeg) - (idx * stepDeg);
+      const rad = angleDeg * Math.PI / 180;
 
-      const scale = 1 - ((z - (-RADIUS)) / (2*RADIUS)) * 0.22;
+      const x = Math.sin(rad) * cfg.RADIUS * 0.55; // horizontal spread
+      const z = Math.cos(rad) * cfg.RADIUS;        // depth
+      const rotY = angleDeg * 0.45;                // slight twist
 
-      const card  = cards[k];
+      // scale: cards forward appear bigger
+      // normalize z from [-RADIUS .. +RADIUS]  =>  0..1 forwardness
+      const t = (z + cfg.RADIUS) / (2 * cfg.RADIUS);
+      const scale = 1 + cfg.CENTER_BOOST * t;
+
+      const card = cards[k];
       card.style.transform = `translate3d(${x}px,0,${z}px) rotateY(${rotY}deg) scale(${scale})`;
-      card.style.zIndex    = Math.round(z + 2000);
+      card.style.zIndex = (2000 + Math.round(z));
 
+      // class states for subtle styling
       let deltaSlots = ((k - idx) % total + total) % total;
       if (deltaSlots > total/2) deltaSlots = total - deltaSlots;
-
       card.classList.remove('center','side','far');
-      if (deltaSlots < .5)      card.classList.add('center');
+      if (deltaSlots < 0.5)      card.classList.add('center');
       else if (deltaSlots < 1.5) card.classList.add('side');
       else                       card.classList.add('far');
     }
   }
 
+  // enable/disable transitions while dragging
   function setTransitions(on){
-    const t = on ? 'transform 300ms cubic-bezier(.2,.85,.2,1), filter 200ms, opacity 200ms'
-                 : 'transform 0s, filter 0s, opacity 0s';
+    const t = on
+      ? 'transform 300ms cubic-bezier(.2,.85,.2,1), filter 200ms, opacity 200ms'
+      : 'transform 0s, filter 0s, opacity 0s';
     cards.forEach(c => c.style.transition = t);
   }
 
-  function isLightboxOpen(){ return lightbox && lightbox.classList.contains('active'); }
-  function bumpActivity(){
-    idle = false;
-    if (idleTimer) clearTimeout(idleTimer);
-    idleTimer = setTimeout(() => { if (!dragging && !isLightboxOpen()) idle = true; }, IDLE_DELAY_MS);
-  }
-
-  carousel.style.touchAction = 'pan-y';
-
+  // Pointer input
   carousel.addEventListener('pointerdown', (e)=>{
     dragging = true; suppressClick = false; movedPx = 0;
     startX = lastX = e.clientX; startIndex = target; velocity = 0;
     setTransitions(false); carousel.classList.add('dragging');
-    try { e.target.setPointerCapture(e.pointerId); } catch(_) {}
-    e.preventDefault();
-    bumpActivity();
-  });
+    e.target.setPointerCapture?.(e.pointerId);
+    e.preventDefault(); bumpActivity();
+  }, {passive:false});
 
   window.addEventListener('pointermove', (e)=>{
     if(!dragging) return;
     const dx = e.clientX - startX;
     movedPx += Math.abs(e.clientX - lastX);
-    target   = startIndex - dx * SENSITIVITY;
-    current  = target;
-    velocity = -(e.clientX - lastX) * SENSITIVITY;
-    lastX    = e.clientX;
+    target = startIndex - dx * cfg.SENSITIVITY;
+    current = target;
+    velocity = -(e.clientX - lastX) * cfg.SENSITIVITY;
+    lastX = e.clientX;
     suppressClick = true;
-    render(wrapIndex(current));
-    bumpActivity();
+    render(wrap(current, total));
   }, {passive:false});
 
   window.addEventListener('pointerup', ()=>{
@@ -107,73 +137,93 @@
     bumpActivity();
   });
 
-  cards.forEach((card,i)=>{
+  // Click poster: first centers it; if already centered, opens video
+  cards.forEach((card, i) => {
     card.addEventListener('click', ()=>{
-      if(suppressClick) return;
+      if (suppressClick) return;
       const nearest = Math.round(current);
-      const isCentered = (wrapIndex(i) === wrapIndex(nearest));
-      if(!isCentered) target = i;
-      else{
+      const isCentered = wrap(i, total) === wrap(nearest, total);
+      if (!isCentered) {
+        target = i;
+      } else {
         const url = card.getAttribute('data-video');
-        if(url) openVideo(url);
+        if (url) openVideo(url);
       }
       bumpActivity();
     });
   });
 
+  // Keyboard arrows (desktop)
   window.addEventListener('keydown', (e)=>{
-    if(isLightboxOpen()){ if(e.key==='Escape') closeVideo(); return; }
-    if(e.key==='ArrowRight') target += 1;
-    if(e.key==='ArrowLeft')  target -= 1;
+    if (isLightboxOpen()){ if(e.key==='Escape') closeVideo(); return; }
+    if (e.key === 'ArrowRight') target += 1;
+    if (e.key === 'ArrowLeft')  target -= 1;
     bumpActivity();
   });
 
+  // Lightbox
   function openVideo(url){
     if (!lightbox || !videoEl) return;
     lightbox.classList.add('active');
     lightbox.setAttribute('aria-hidden','false');
     videoEl.src = url;
     videoEl.currentTime = 0;
-    videoEl.pause();
+    videoEl.pause(); // let user press play; avoids autoplay policies
     idle = false;
   }
   function closeVideo(){
     if (!lightbox || !videoEl) return;
     videoEl.pause(); videoEl.removeAttribute('src'); videoEl.load();
-    lightbox.classList.remove('active'); lightbox.setAttribute('aria-hidden','true');
+    lightbox.classList.remove('active');
+    lightbox.setAttribute('aria-hidden','true');
     bumpActivity();
   }
-  closeBtn && closeBtn.addEventListener('click', closeVideo);
-  backdrop && backdrop.addEventListener('click', closeVideo);
+  closeBtn?.addEventListener('click', closeVideo);
+  backdrop?.addEventListener('click', closeVideo);
 
-  window.addEventListener('resize', () => {
-    RADIUS = computeRadius();
-    render(wrapIndex(current));
-  });
-
+  // Animation loop: momentum + snap + idle drift
   function tick(){
     if(!dragging && !isLightboxOpen()){
-      if(idle) target += AUTO_SPEED;
-      else{
-        target += velocity; velocity *= FRICTION;
+      if (idle) {
+        target += cfg.AUTO_SPEED;
+      } else {
+        target += velocity;
+        velocity *= cfg.FRICTION;
+
         const nearest = Math.round(target);
         const pull = shortestDelta(target, nearest);
-        target += pull * SNAP;
-        if (Math.abs(velocity) < 0.00005 && Math.abs(pull) < 0.0005){ target = nearest; velocity = 0; }
+        target += pull * cfg.SNAP;
+
+        if (Math.abs(velocity) < 0.00005 && Math.abs(pull) < 0.0005){
+          target = nearest;
+          velocity = 0;
+        }
       }
-      const d = shortestDelta(current, target); current += d * LERP;
-      render(wrapIndex(current));
+
+      const d = shortestDelta(current, target);
+      current += d * cfg.LERP;
+      render(wrap(current, total));
     }
     requestAnimationFrame(tick);
   }
 
+  // Handle resize/orientation change — recompute geometry
+  function onResize(){
+    cfg = getConfig();
+    stepDeg = 360 / total;
+    render(wrap(current, total));
+  }
+  window.addEventListener('resize', onResize);
+  window.addEventListener('orientationchange', onResize);
+
+  // init
   setTransitions(true);
   render(0);
   bumpActivity();
   requestAnimationFrame(tick);
 })();
 
-// Back link → home
+// Back link → hard redirect home (black label “← home”)
 document.getElementById('back-link')?.addEventListener('click', (e)=>{
   e.preventDefault();
   window.location.href = 'https://liveoffsilence.com';
