@@ -5,170 +5,210 @@
   --card-h:300px;
 }
 
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{width:100%;height:100%;overflow:hidden;background:linear-gradient(180deg,var(--bg1),var(--bg2));
-  font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial}
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
 
-/* Scene dead-center */
+html,body{
+  width:100%;
+  height:100dvh; /* fix iOS toolbar */
+  overflow:hidden;
+  background:linear-gradient(180deg,var(--bg1),var(--bg2));
+  font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial;
+}
+
+/* --- Scene centered --- */
 .scene{
-  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-  width:100%; max-width:1100px; height:100vh; perspective:1200px;
+  position:absolute;
+  top:50%;
+  left:50%;
+  width:100vw;
+  height:100dvh;
+  transform:translate(-50%,-50%);
+  perspective:1100px;
 }
 
-/* Carousel core */
+/* --- Carousel --- */
 .carousel{
-  width:900px; height:380px; position:relative; transform-style:preserve-3d;
+  width:900px;
+  height:420px;
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  transform-style:preserve-3d;
   transition:transform 600ms cubic-bezier(.2,.85,.2,1);
-  cursor:grab; touch-action:none; -webkit-user-select:none; user-select:none;
+  cursor:grab;
+  touch-action:none;
 }
-.carousel.dragging{cursor:grabbing;transition:none}
 
-/* Cards */
+.carousel.dragging{
+  cursor:grabbing;
+  transition:none;
+}
+
+/* --- Cards --- */
 .card{
-  position:absolute; width:var(--card-w); height:var(--card-h);
-  left:50%; top:50%; transform-origin:center center; border-radius:14px; overflow:hidden;
-  box-shadow:0 18px 40px rgba(5,15,30,0.18), inset 0 0 0 1px rgba(255,255,255,0.12), inset 0 0 0 2px rgba(0,0,0,0.03);
-  transition:transform 300ms cubic-bezier(.2,.85,.2,1), filter 200ms, opacity 200ms;
-  backface-visibility:hidden; user-select:none;
+  position:absolute;
+  width:var(--card-w);
+  height:var(--card-h);
+  left:50%;
+  top:50%;
+  transform-origin:center center;
+  border-radius:14px;
+  overflow:hidden;
+  backface-visibility:hidden;
+  user-select:none;
+  box-shadow:0 18px 40px rgba(5,15,30,0.18);
+  transition:transform .3s, filter .2s, opacity .2s;
 }
-.card img{width:100%;height:100%;object-fit:cover;display:block}
-.card::after{
-  content:""; position:absolute; inset:0;
-  background:linear-gradient(20deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.00) 30%, rgba(255,255,255,0.06) 60%, rgba(255,255,255,0.00) 100%);
-  mix-blend-mode:screen; pointer-events:none;
+.card img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
 }
-.card.center{transform:translate3d(0,-10px,420px) scale(1.1)!important; z-index:999;
-  box-shadow:0 40px 80px rgba(5,15,30,0.35), inset 0 0 0 1px rgba(255,255,255,0.13);
-  filter:saturate(1.05) contrast(1.04)}
-.card.side{filter:saturate(0.97) brightness(0.99)}
-.card.far{opacity:.55;filter:blur(.6px) saturate(.85) brightness(.95)}
 
-/* Vignette + grain */
-body::before{content:""; position:fixed; inset:0; pointer-events:none;
-  background:radial-gradient(60% 50% at 50% 40%, rgba(0,0,0,0.05), transparent 55%),
-             radial-gradient(100% 80% at 50% 120%, rgba(0,0,0,0.12), transparent 60%);
-  mix-blend-mode:multiply}
-body::after{content:""; position:fixed; inset:-50%; pointer-events:none; opacity:.08;
-  background:repeating-linear-gradient(0deg, rgba(0,0,0,.02) 0 2px, rgba(0,0,0,0) 2px 4px); filter:blur(.2px)}
+.card.center{
+  transform:translate3d(0,0,420px) scale(1.15)!important;
+  z-index:999;
+  filter:contrast(1.06) saturate(1.08);
+}
+.card.side{
+  opacity:.6;
+  filter:brightness(.94);
+}
+.card.far{
+  opacity:.2;
+  filter:blur(1.5px) brightness(.88);
+}
 
-/* Floor glow */
-.floor{position:absolute; left:50%; transform:translateX(-50%); bottom:18%;
-  width:min(82%,980px); height:140px; pointer-events:none;
-  background:radial-gradient(60% 40% at 50% 10%, rgba(120,180,240,0.16), transparent 45%);
-  filter:blur(10px); mix-blend-mode:screen; z-index:0}
+/* --- Light vignette --- */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background:radial-gradient(80% 70% at 50% 30%, rgba(0,0,0,0.05), transparent 60%);
+  mix-blend-mode:multiply;
+}
 
-/* Lightbox */
-.lightbox{position:fixed; inset:0; z-index:9999; display:none}
-.lightbox.active{display:block}
-.lightbox-backdrop{position:absolute; inset:0; background:rgba(0,0,0,0.65); backdrop-filter:blur(4px)}
+/* --- Floor glow (desktop only) --- */
+.floor{
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  bottom:12%;
+  width:min(82%,980px);
+  height:100px;
+  pointer-events:none;
+  background:radial-gradient(50% 45%, rgba(120,180,240,0.18), transparent 50%);
+  filter:blur(14px);
+  mix-blend-mode:screen;
+}
+
+/* --- Lightbox video overlay --- */
+.lightbox{
+  position:fixed; inset:0;
+  display:none;
+  z-index:9999;
+}
+.lightbox.active{
+  display:block;
+}
+.lightbox-backdrop{
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,0.75);
+  backdrop-filter:blur(6px);
+}
 .lightbox-dialog{
-  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
-  width:min(900px, 92vw); background:#0f1320; border-radius:16px;
-  box-shadow:0 20px 60px rgba(0,0,0,0.45); overflow:hidden
+  position:absolute;
+  left:50%; top:50%;
+  transform:translate(-50%,-50%);
+  width:min(900px, 92vw);
+  background:#000;
+  border-radius:14px;
+  overflow:hidden;
 }
-.lightbox video{display:block; width:100%; height:auto; background:#000}
+.lightbox video{
+  width:100%; height:auto; display:block;
+}
 .lightbox-close{
-  position:absolute; top:14px; left:14px; width:40px; height:40px;
-  border:none; border-radius:999px; background:rgba(255,255,255,0.95); color:#111;
-  cursor:pointer; font-size:20px; line-height:40px; box-shadow:0 6px 14px rgba(0,0,0,0.25)
+  position:absolute;
+  top:12px; right:12px;
+  width:40px; height:40px;
+  border:none;
+  border-radius:50%;
+  background:#fff;
+  font-size:20px;
+  cursor:pointer;
+  z-index:3;
 }
-.lightbox-close:hover{transform:translateY(-1px)}
 
-/* Back link */
+/* --- Back button --- */
 .back-min{
-  position:fixed; top:18px; left:18px; z-index:1000; color:#fff;
-  font:700 13px/1 Tahoma, sans-serif; text-decoration:none; text-transform:lowercase;
-  letter-spacing:.3px; opacity:.95; mix-blend-mode:difference;
-  transition:opacity .15s ease, transform .12s ease
+  position:fixed;
+  top:18px; left:18px;
+  z-index:2000;
+  color:#fff;
+  font:700 14px/1 Tahoma;
+  text-decoration:none;
+  text-transform:lowercase;
+  opacity:.92;
+  text-shadow:0 0 6px rgba(0,0,0,.7);
 }
-.back-min:hover{opacity:1; transform:translateX(-2px)}
-@supports not (mix-blend-mode:difference){ .back-min{ text-shadow:0 1px 2px rgba(0,0,0,.5) } }
-
-/* ===== Mobile tuning ===== */
-@media (max-width:900px){
-  :root{ --card-w:180px; --card-h:240px }
-  .carousel{ width:700px; height:320px }
-}
-@media (max-width:600px){
-  :root{ --card-w:150px; --card-h:200px }
-  .carousel{ width:92vw; height:270px }
-  .floor{ display:none }                  /* cleaner on small screens */
-  .back-min{ top:12px; left:12px; font-size:14px; padding:.2rem .45rem; border-radius:999px }
-}
-@media (max-width:380px){
-  :root{ --card-w:135px; --card-h:185px }
-  .carousel{ width:94vw; height:250px }
-}
-/* ✅ FIX: Proper mobile centering for carousel */
-@media (max-width: 600px) {
-  .scene {
-    top: 57%;                        /* lower the wheel */
-    height: 90vh;                    /* use more screen */
-    transform: translate(-50%, -50%);
-  }
-
-  .carousel {
-    height: 60vh !important;         /* show the poster fully */
-    width: 100vw !important;
-  }
-
-  /* keep the center card fully in view */
-  .card.center {
-    transform: translate3d(0, -10px, 420px) scale(1.22) !important;
-  }
-
-  /* allow swipe + scroll */
-  .carousel {
-    touch-action: pan-y;
-  }
+.back-min:hover{
+  opacity:1;
+  transform:translateX(-2px);
 }
 
-/* Extra small phones */
-@media (max-width: 380px) {
-  :root {
-    --card-w:125px;
-    --card-h:170px;
+/* ✅ Final Mobile Fix */
+@media(max-width:600px){
+
+  :root{
+    --card-w:70vw;
+    --card-h:46vh;
   }
 
-  .scene {
-    top: 60%;
-  }
-}
-/* ✅ Better mobile layout fix */
-@media (max-width: 600px) {
-
-  html, body {
-    height: 100dvh; /* dynamic viewport height fixes Safari bar issues */
-    overflow: hidden;
+  .carousel{
+    width:100vw !important;
+    height:75vh !important;
   }
 
-  .scene {
-    top: 66%; /* move all content lower */
-    height: 100dvh;
-    transform: translate(-50%, -50%);
+  .scene{
+    perspective:900px;
   }
 
-  .carousel {
-    width: 100vw !important;
-    height: 72vh !important; /* more visible space */
+  .card.center{
+    transform:translate3d(0,0,360px) scale(1.25)!important;
   }
 
-  .card.center {
-    transform: translate3d(0, -5px, 440px) scale(1.18) !important;
+  .card.side{
+    opacity:.35;
   }
 
-  .floor {
-    bottom: 12%;
+  .card.far{
+    opacity:.15;
+  }
+
+  .floor{
+    display:none;
+  }
+
+  .back-min{
+    font-size:15px;
+    top:14px;
+    left:14px;
   }
 }
 
 /* Ultra small phones */
-@media (max-width: 380px) {
-  .scene {
-    top: 70%;
-  }
-  :root {
-    --card-w:125px;
-    --card-h:170px;
+@media(max-width:380px){
+  :root{
+    --card-w:76vw;
+    --card-h:42vh;
   }
 }
