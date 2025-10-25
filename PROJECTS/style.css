@@ -5,17 +5,16 @@
   --card-h:300px;
 }
 
-/* base */
-*{box-sizing:border-box;margin:0;padding:0}
+*{ box-sizing:border-box; margin:0; padding:0 }
 html,body{
   width:100%;
   height:100%;
   overflow:hidden;
   background:linear-gradient(180deg,var(--bg1),var(--bg2));
-  font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial
+  font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial;
 }
 
-/* scene dead-center (desktop) */
+/* Scene dead-center */
 .scene{
   position:absolute;
   top:50%; left:50%;
@@ -26,21 +25,22 @@ html,body{
   perspective:1200px;
 }
 
-/* carousel core */
+/* Carousel core */
 .carousel{
   width:900px;
+  max-width:92vw;
   height:380px;
   position:relative;
   transform-style:preserve-3d;
   transition:transform 600ms cubic-bezier(.2,.85,.2,1);
   cursor:grab;
-  touch-action:none;
-  -webkit-user-select:none; user-select:none;
-  margin:0 auto;                 /* keep it centered in the scene */
+  touch-action:pan-y;           /* allow vertical scroll on phones */
+  -webkit-user-select:none;
+  user-select:none;
 }
-.carousel.dragging{cursor:grabbing;transition:none}
+.carousel.dragging{ cursor:grabbing; transition:none }
 
-/* cards */
+/* Cards */
 .card{
   position:absolute;
   width:var(--card-w); height:var(--card-h);
@@ -52,12 +52,12 @@ html,body{
     inset 0 0 0 1px rgba(255,255,255,0.12),
     inset 0 0 0 2px rgba(0,0,0,0.03);
   transition:transform 300ms cubic-bezier(.2,.85,.2,1), filter 200ms, opacity 200ms;
-  backface-visibility:hidden; user-select:none;
+  backface-visibility:hidden;
+  user-select:none;
 }
-.card img{width:100%;height:100%;object-fit:cover;display:block}
+.card img{ width:100%; height:100%; object-fit:cover; display:block }
 .card::after{
-  content:"";
-  position:absolute; inset:0;
+  content:""; position:absolute; inset:0;
   background:linear-gradient(20deg,
     rgba(255,255,255,0.10) 0%,
     rgba(255,255,255,0.00) 30%,
@@ -65,102 +65,85 @@ html,body{
     rgba(255,255,255,0.00) 100%);
   mix-blend-mode:screen; pointer-events:none;
 }
-.card.center{
-  transform:translate3d(0,-10px,420px) scale(1.1)!important;
-  z-index:999;
-  box-shadow:0 40px 80px rgba(5,15,30,0.35), inset 0 0 0 1px rgba(255,255,255,0.13);
-  filter:saturate(1.05) contrast(1.04)
-}
-.card.side{filter:saturate(0.97) brightness(0.99)}
-.card.far{opacity:.55;filter:blur(.6px) saturate(.85) brightness(.95)}
 
-/* vignette + grain */
+/* Emphasis (⚠ no transform override here) */
+.card.center{
+  z-index:999;
+  box-shadow:
+    0 40px 80px rgba(5,15,30,0.35),
+    inset 0 0 0 1px rgba(255,255,255,0.13);
+  filter:saturate(1.05) contrast(1.04);
+}
+.card.side{ filter:saturate(0.97) brightness(0.99) }
+.card.far { opacity:.55; filter:blur(.6px) saturate(.85) brightness(.95) }
+
+/* Vignette + grain */
 body::before{
-  content:""; position:fixed; inset:0; pointer-events:none;
+  content:"";
+  position:fixed; inset:0; pointer-events:none;
   background:
     radial-gradient(60% 50% at 50% 40%, rgba(0,0,0,0.05), transparent 55%),
     radial-gradient(100% 80% at 50% 120%, rgba(0,0,0,0.12), transparent 60%);
-  mix-blend-mode:multiply
+  mix-blend-mode:multiply;
 }
 body::after{
-  content:""; position:fixed; inset:-50%; pointer-events:none; opacity:.08;
+  content:"";
+  position:fixed; inset:-50%; pointer-events:none; opacity:.08;
   background:repeating-linear-gradient(0deg, rgba(0,0,0,.02) 0 2px, rgba(0,0,0,0) 2px 4px);
-  filter:blur(.2px)
+  filter:blur(.2px);
 }
 
-/* floor glow */
+/* Floor glow */
 .floor{
   position:absolute; left:50%; transform:translateX(-50%);
-  bottom:18%; width:min(82%,980px); height:140px; pointer-events:none;
+  bottom:18%;
+  width:min(82%,980px); height:140px; pointer-events:none;
   background:radial-gradient(60% 40% at 50% 10%, rgba(120,180,240,0.16), transparent 45%);
-  filter:blur(10px); mix-blend-mode:screen; z-index:0
+  filter:blur(10px); mix-blend-mode:screen; z-index:0;
 }
 
-/* lightbox */
-.lightbox{position:fixed; inset:0; z-index:9999; display:none}
-.lightbox.active{display:block}
-.lightbox-backdrop{position:absolute; inset:0; background:rgba(0,0,0,0.65); backdrop-filter:blur(4px)}
+/* Lightbox */
+.lightbox{ position:fixed; inset:0; z-index:9999; display:none }
+.lightbox.active{ display:block }
+.lightbox-backdrop{ position:absolute; inset:0; background:rgba(0,0,0,0.65); backdrop-filter:blur(4px) }
 .lightbox-dialog{
   position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
-  width:min(900px, 92vw); background:#0f1320; border-radius:16px;
-  box-shadow:0 20px 60px rgba(0,0,0,0.45); overflow:hidden
+  width:min(900px, 92vw);
+  background:#0f1320; border-radius:16px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.45); overflow:hidden;
 }
-.lightbox video{display:block; width:100%; height:auto; background:#000}
+.lightbox video{ display:block; width:100%; height:auto; background:#000 }
 .lightbox-close{
   position:absolute; top:14px; left:14px; width:40px; height:40px;
   border:none; border-radius:999px; background:rgba(255,255,255,0.95); color:#111;
-  cursor:pointer; font-size:20px; line-height:40px; box-shadow:0 6px 14px rgba(0,0,0,0.25)
+  cursor:pointer; font-size:20px; line-height:40px; box-shadow:0 6px 14px rgba(0,0,0,0.25);
 }
-.lightbox-close:hover{transform:translateY(-1px)}
+.lightbox-close:hover{ transform:translateY(-1px) }
 
-/* back link — BLACK */
+/* Back link — keep it black */
 .back-min{
   position:fixed; top:18px; left:18px; z-index:1000;
-  color:#111;                        /* << black */
+  color:#111;                               /* black, not blending */
+  mix-blend-mode:normal; text-shadow:none;  /* ensure it stays black */
   font:700 13px/1 Tahoma, sans-serif;
   text-decoration:none; text-transform:lowercase;
   letter-spacing:.3px; opacity:.95;
-  transition:opacity .15s ease, transform .12s ease
+  transition:opacity .15s ease, transform .12s ease;
 }
-.back-min:hover{opacity:1; transform:translateX(-2px)}
+.back-min:hover{ opacity:1; transform:translateX(-2px) }
 
-/* ---------- Mobile tuning (keeps desktop intact) ---------- */
+/* ===== Mobile tuning ===== */
 @media (max-width:900px){
   :root{ --card-w:180px; --card-h:240px }
-  .carousel{ width:700px; height:320px }
+  .carousel{ height:320px }
 }
-
 @media (max-width:600px){
   :root{ --card-w:150px; --card-h:200px }
-
-  html,body{ height:100dvh; overflow:hidden; }
-
-  .scene{
-    width:100vw;
-    height:100dvh;
-    top:52%;                         /* nudge a bit lower */
-    transform:translate(-50%,-50%);
-    perspective:1000px;              /* a touch flatter on phones */
-  }
-
-  .carousel{
-    width:100vw;
-    height:62vh;
-    margin:0 auto;
-    touch-action:pan-y;              /* allow vertical scroll gestures */
-  }
-
-  /* smaller, fully in-view center card */
-  .card.center{
-    transform:translate3d(0,-6px,360px) scale(1.04) !important;
-  }
-
-  .floor{ display:none; }            /* cleaner on small screens */
-  .back-min{ top:12px; left:12px; }
+  .carousel{ width:100vw; height:64vh }
+  .floor{ display:none }
+  .back-min{ top:12px; left:12px; font-size:14px; padding:.2rem .45rem; border-radius:999px }
 }
-
 @media (max-width:380px){
   :root{ --card-w:135px; --card-h:185px }
-  .scene{ top:56%; }
-  .carousel{ height:66vh; }
+  .carousel{ height:58vh }
 }
