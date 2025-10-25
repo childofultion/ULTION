@@ -1,43 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ULTION</title>
 
 <style>
-  /* ===== base ===== */
-  body{
-    background:#000; color:#f2f2f2;
-    font-family:Consolas,"Courier New",monospace;
-    display:flex; align-items:center; justify-content:center;
-    height:100vh; margin:0; text-align:center;
-    font-size:1.6rem;  /* big, clean text */
+  /* ===== BASE ===== */
+  body {
+    background: #000;
+    color: #f2f2f2;
+    font-family: Consolas, "Courier New", monospace;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh; 
+    margin: 0;
+    text-align: center;
   }
-  #terminal{ white-space:pre-wrap; line-height:2.2rem; }
 
-  /* menu items */
-  .command{
-    display:block; margin:.7rem 0; cursor:pointer;
-    color:#f2f2f2; text-decoration:none;
-    position:relative; padding-left:1.3rem; opacity:.9;
-    transition:all .2s ease; font-size:1.6rem;
+  #terminal {
+    white-space: pre-wrap;
+    line-height: 2.4rem;
+    font-size: 2rem; /* 🔥 BIGGER main text + intro */
+    text-shadow: 0 0 6px rgba(255,255,255,0.35);
   }
-  .command::before{
-    content:"> "; position:absolute; left:0; opacity:0; transition:.2s;
+
+  /* Menu commands */
+  .command {
+    display: block;
+    margin: 0.9rem 0;
+    cursor: pointer;
+    color: #f2f2f2;
+    text-decoration: none;
+    position: relative;
+    padding-left: 1.4rem;
+    font-size: 2rem; /* match intro size */
+    opacity: 0;
+    transition: opacity 0.4s ease; /* fade in */
   }
-  .command:hover::before{ opacity:1; }
-  .command:hover{ opacity:1; text-shadow:0 0 10px #fff; }
-  .command:visited{ color:#f2f2f2 !important; } /* no purple */
+
+  .command::before {
+    content: "> ";
+    position: absolute;
+    left: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .command:hover::before {
+    opacity: 1;
+  }
+
+  .command:hover {
+    opacity: 1;
+    text-shadow: 0 0 10px #fff;
+  }
 </style>
+
 </head>
 <body>
 
 <div id="terminal"></div>
 
 <script>
-  const terminal = document.getElementById("terminal");
-  const intro = "WELCOME TO ULTION";
+  const term = document.getElementById("terminal");
+  const intro = "WELCOME TO ULTION_";
   const pages = [
     { text:"ABOUT",     url:"ABOUT/index.html" },
     { text:"PROJECTS",  url:"PROJECTS/index.html" },
@@ -47,40 +75,53 @@
 
   let i = 0;
 
-  function typeIntro(){
+  function typeIntro() {
     if(i < intro.length){
-      terminal.textContent += intro[i++];
-      setTimeout(typeIntro, 90);
-    }else{
-      setTimeout(removeIntro, 700);
+      term.textContent += intro[i++];
+      setTimeout(typeIntro, 100);
+    } else {
+      setTimeout(removeCursor, 400);
     }
   }
 
-  function removeIntro(){
+  function removeCursor() {
+    term.textContent = term.textContent.replace("_", "");
+    setTimeout(clearIntro, 600);
+  }
+
+  function clearIntro() {
     if(i > 0){
-      terminal.textContent = intro.slice(0, --i);
-      setTimeout(removeIntro, 50);
-    }else{
-      showMenu();
+      i--;
+      term.textContent = intro.slice(0, i);
+      setTimeout(clearIntro, 45);
+    } else {
+      setTimeout(showMenu, 300);
     }
   }
 
-  function showMenu(){
-    terminal.innerHTML = "";
-    pages.forEach(info=>{
-      const a = document.createElement("a");
-      a.textContent = info.text;
-      a.className = "command";
-      a.href = info.url;                 // real link
-      a.addEventListener("click", (e)=>{ // in-place navigate
+  function showMenu() {
+    term.innerHTML = "";
+    pages.forEach((info, index) => {
+      const link = document.createElement("a");
+      link.textContent = info.text;
+      link.href = info.url;
+      link.classList.add("command");
+
+      link.addEventListener("click", e => {
         e.preventDefault();
         window.location.href = info.url;
       });
-      terminal.appendChild(a);
+
+      term.appendChild(link);
+
+      setTimeout(() => {
+        link.style.opacity = 1; // fade in per-item
+      }, 300 * index);
     });
   }
 
   typeIntro();
 </script>
+
 </body>
 </html>
