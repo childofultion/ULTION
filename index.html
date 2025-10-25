@@ -116,14 +116,27 @@
       pointer-events: none;
       z-index: 2;
     }
+
+    /* Hide nav links until typed out */
+    nav.commands {
+      display: none;
+    }
   </style>
 </head>
 <body>
   <div id="terminal"></div>
   <div class="crt-glow"></div>
 
+  <nav class="commands">
+    <a href="ABOUT/index.html">ABOUT</a>
+    <a href="PROJECTS/index.html">PROJECTS</a>
+    <a href="TENEBROUS/index.html">TENEBROUS</a>
+    <a href="https://store.childofultion.com">STORE</a>
+  </nav>
+
   <script>
     const terminal = document.getElementById('terminal');
+    const nav = document.querySelector('.commands');
     const introText = "WELCOME TO ULTION";
     const commands = ["ABOUT", "PROJECTS", "STORE", "TENEBROUS"];
     let index = 0;
@@ -153,33 +166,33 @@
 
     function typeCommands(i) {
       if (i < commands.length) {
-        const cmdDiv = document.createElement("div");
+        const cmdDiv = document.createElement("a");
         cmdDiv.classList.add("command");
+        cmdDiv.textContent = commands[i];
         terminal.appendChild(cmdDiv);
-        typeCommandText(cmdDiv, commands[i], 0, () => {
-          cmdDiv.addEventListener("click", () => alert(`Opening ${commands[i]}...`));
-          typeCommands(i + 1);
-        });
-      }
-    }
 
-    function typeCommandText(element, text, j, callback) {
-      if (j < text.length) {
-        element.textContent += text.charAt(j);
-        setTimeout(() => typeCommandText(element, text, j + 1, callback), 90);
-      } else {
-        callback();
+        // link targets
+        const map = {
+          ABOUT: "ABOUT/",
+          PROJECTS: "PROJECTS/",
+          STORE: "https://store.childofultion.com",
+          TENEBROUS: "TENEBROUS/"
+        };
+
+        // set correct href based on environment
+        const parts = location.pathname.split('/').filter(Boolean);
+        const base = parts.length > 0 ? `/${parts[0]}/` : '/';
+        cmdDiv.href = map[commands[i]].startsWith("http")
+          ? map[commands[i]]
+          : base + map[commands[i]];
+
+        // next command
+        typeCommands(i + 1);
       }
     }
 
     // Start animation
     typeText();
   </script>
-  <nav class="commands">
-  <a href="ABOUT/index.html">ABOUT</a>
-  <a href="PROJECTS/index.html">PROJECTS</a>
-  <a href="TENEBROUS/index.html">TENEBROUS</a>
-  <a href="https://store.childofultion.com">STORE</a>
-</nav>
 </body>
 </html>
