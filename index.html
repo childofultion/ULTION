@@ -6,116 +6,81 @@
 <title>ULTION</title>
 
 <style>
-  /* ===== PAGE / CRT LOOK (as before) ===== */
-  :root { --fg:#f2f2f2; }
-
+  /* ===== base ===== */
   body{
-    background:#000; color:var(--fg);
+    background:#000; color:#f2f2f2;
     font-family:Consolas,"Courier New",monospace;
-    margin:0; height:100vh; overflow:hidden;
     display:flex; align-items:center; justify-content:center;
-    text-align:center;
-    perspective:1000px;
+    height:100vh; margin:0; text-align:center;
+    font-size:1.6rem;  /* big, clean text */
   }
+  #terminal{ white-space:pre-wrap; line-height:2.2rem; }
 
-  /* scanlines */
-  body::before{
-    content:""; position:fixed; inset:0; pointer-events:none; z-index:5;
-    background:repeating-linear-gradient(
-      to bottom,
-      rgba(255,255,255,.03) 0px,
-      rgba(255,255,255,.03) 1px,
-      transparent 2px,
-      transparent 3px
-    );
-    opacity:.15; mix-blend-mode:overlay;
+  /* menu items */
+  .command{
+    display:block; margin:.7rem 0; cursor:pointer;
+    color:#f2f2f2; text-decoration:none;
+    position:relative; padding-left:1.3rem; opacity:.9;
+    transition:all .2s ease; font-size:1.6rem;
   }
-
-  /* soft radial glow */
-  body::after{
-    content:""; position:fixed; inset:0; pointer-events:none; z-index:4;
-    background:radial-gradient(circle at 50% 50%,
-      rgba(255,255,255,.08) 0%,
-      rgba(255,255,255,0) 70%);
-    opacity:.4; mix-blend-mode:screen;
+  .command::before{
+    content:"> "; position:absolute; left:0; opacity:0; transition:.2s;
   }
-
-  /* terminal block */
-  #terminal{
-    white-space:pre-wrap; line-height:1.8;
-    text-shadow:0 0 4px rgba(255,255,255,.3);
-    transform:rotateX(1deg) rotateY(-1deg);
-    animation:flicker 5s infinite;
-  }
-
-  @keyframes flicker{ 0%,100%{opacity:1} 98%{opacity:.95} }
-
-  /* ===== COMMAND LINKS (white, no underline) ===== */
-  #terminal a{
-    color:var(--fg) !important; text-decoration:none !important;
-    display:block; margin:.5rem 0; font-size:1.4rem;
-    position:relative; padding-left:1.2ch; opacity:.85;
-    transition:opacity .2s ease, text-shadow .2s ease;
-  }
-  #terminal a:visited{ color:var(--fg) !important; }
-  #terminal a::before{
-    content:">"; position:absolute; left:0; top:0; opacity:0; transition:opacity .2s ease;
-  }
-  #terminal a:hover{ opacity:1; text-shadow:0 0 10px rgba(255,255,255,.7); }
-  #terminal a:hover::before{ opacity:.9; }
-
-  @media (prefers-reduced-motion:reduce){
-    body::before, body::after{ opacity:.25 }
-    #terminal{ animation:none }
-  }
+  .command:hover::before{ opacity:1; }
+  .command:hover{ opacity:1; text-shadow:0 0 10px #fff; }
+  .command:visited{ color:#f2f2f2 !important; } /* no purple */
 </style>
 </head>
 <body>
 
-  <div id="terminal"></div>
+<div id="terminal"></div>
 
-  <script>
-    const terminal = document.getElementById('terminal');
-    const intro = "WELCOME TO ULTION";
-    const links = [
-      { text: "ABOUT",     href: "ABOUT/index.html" },
-      { text: "PROJECTS",  href: "PROJECTS/index.html" },
-      { text: "STORE",     href: "https://store.childofultion.com" },
-      { text: "TENEBROUS", href: "TENEBROUS/index.html" }
-    ];
+<script>
+  const terminal = document.getElementById("terminal");
+  const intro = "WELCOME TO ULTION";
+  const pages = [
+    { text:"ABOUT",     url:"ABOUT/index.html" },
+    { text:"PROJECTS",  url:"PROJECTS/index.html" },
+    { text:"STORE",     url:"https://store.childofultion.com" },
+    { text:"TENEBROUS", url:"TENEBROUS/index.html" }
+  ];
 
-    let i = 0;
+  let i = 0;
 
-    function typeIntro(){
-      if(i < intro.length){
-        terminal.textContent += intro[i++];
-        setTimeout(typeIntro, 90);
-      } else {
-        setTimeout(deleteIntro, 650);
-      }
+  function typeIntro(){
+    if(i < intro.length){
+      terminal.textContent += intro[i++];
+      setTimeout(typeIntro, 90);
+    }else{
+      setTimeout(removeIntro, 700);
     }
+  }
 
-    function deleteIntro(){
-      if(i > 0){
-        terminal.textContent = intro.slice(0, --i);
-        setTimeout(deleteIntro, 45);
-      } else {
-        showMenu();
-      }
+  function removeIntro(){
+    if(i > 0){
+      terminal.textContent = intro.slice(0, --i);
+      setTimeout(removeIntro, 50);
+    }else{
+      showMenu();
     }
+  }
 
-    function showMenu(){
-      terminal.innerHTML = "";
-      for(const {text, href} of links){
-        const a = document.createElement('a');
-        a.textContent = text;
-        a.href = href;
-        terminal.appendChild(a);
-      }
-    }
+  function showMenu(){
+    terminal.innerHTML = "";
+    pages.forEach(info=>{
+      const a = document.createElement("a");
+      a.textContent = info.text;
+      a.className = "command";
+      a.href = info.url;                 // real link
+      a.addEventListener("click", (e)=>{ // in-place navigate
+        e.preventDefault();
+        window.location.href = info.url;
+      });
+      terminal.appendChild(a);
+    });
+  }
 
-    typeIntro();
-  </script>
-
+  typeIntro();
+</script>
 </body>
 </html>
