@@ -1,0 +1,256 @@
+:root{
+  --bg1:#f7fbff;
+  --bg2:#e6f3ff;
+  --card-w:220px;
+  --card-h:300px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+html,body{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:linear-gradient(180deg,var(--bg1),var(--bg2));
+  font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial;
+}
+
+/* Lock the scene dead-center on screen (both axes) */
+.scene{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  width:100%;
+  max-width:1100px;
+  height:100vh;
+  perspective:1200px;
+}
+
+/* Carousel core */
+.carousel{
+  width:900px;
+  height:380px;
+  position:relative;
+  transform-style:preserve-3d;
+  transition:transform 600ms cubic-bezier(.2,.85,.2,1);
+  cursor:grab;
+  touch-action:none; /* better touch behavior on mobile */
+}
+.carousel.dragging{cursor:grabbing;transition:none}
+
+/* Cards (posters) */
+.card{
+  position:absolute;
+  width:var(--card-w);
+  height:var(--card-h);
+  left:50%;
+  top:50%;
+  transform-origin:center center;
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:
+    0 18px 40px rgba(5,15,30,0.18),
+    inset 0 0 0 1px rgba(255,255,255,0.12),
+    inset 0 0 0 2px rgba(0,0,0,0.03);
+  transition:transform 300ms cubic-bezier(.2,.85,.2,1), filter 200ms, opacity 200ms;
+  backface-visibility:hidden;
+  user-select:none;
+}
+.card img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* subtle gloss sweep */
+.card::after{
+  content:"";
+  position:absolute; inset:0;
+  background:linear-gradient(20deg,
+    rgba(255,255,255,0.10) 0%,
+    rgba(255,255,255,0.00) 30%,
+    rgba(255,255,255,0.06) 60%,
+    rgba(255,255,255,0.00) 100%);
+  mix-blend-mode:screen;
+  pointer-events:none;
+}
+
+/* Emphasis states */
+.card.center{
+  transform:translate3d(0,-10px,420px) scale(1.1)!important;
+  z-index:999;
+  box-shadow:
+    0 40px 80px rgba(5,15,30,0.35),
+    inset 0 0 0 1px rgba(255,255,255,0.13);
+  filter:saturate(1.05) contrast(1.04);
+}
+.card.side{filter:saturate(0.97) brightness(0.99)}
+.card.far{opacity:.55;filter:blur(.6px) saturate(.85) brightness(.95)}
+
+/* Background vignette + very light grain */
+body::before{
+  content:"";
+  position:fixed; inset:0; pointer-events:none;
+  background:
+    radial-gradient(60% 50% at 50% 40%, rgba(0,0,0,0.05), transparent 55%),
+    radial-gradient(100% 80% at 50% 120%, rgba(0,0,0,0.12), transparent 60%);
+  mix-blend-mode:multiply;
+}
+body::after{
+  content:"";
+  position:fixed; inset:-50%; pointer-events:none;
+  opacity:.08;
+  background:repeating-linear-gradient(0deg, rgba(0,0,0,.02) 0 2px, rgba(0,0,0,0) 2px 4px);
+  filter:blur(.2px);
+}
+
+/* Optional “floor” glow */
+.floor{
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  bottom:18%;
+  width:min(82%,980px);
+  height:140px;
+  pointer-events:none;
+  background:radial-gradient(60% 40% at 50% 10%, rgba(120,180,240,0.16), transparent 45%);
+  filter:blur(10px);
+  mix-blend-mode:screen;
+  z-index:0;
+}
+
+/* ===== Lightbox (video overlay) ===== */
+.lightbox{
+  position:fixed; inset:0; z-index:9999;
+  display:none;
+}
+.lightbox.active{display:block}
+.lightbox-backdrop{
+  position:absolute; inset:0;
+  background:rgba(0,0,0,0.65);
+  backdrop-filter:blur(4px);
+}
+.lightbox-dialog{
+  position:absolute; left:50%; top:50%;
+  transform:translate(-50%,-50%);
+  width:min(900px, 92vw);
+  background:#0f1320;
+  border-radius:16px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.45);
+  overflow:hidden;
+}
+.lightbox video{
+  display:block; width:100%; height:auto; background:black;
+}
+.lightbox-close{
+  position:absolute; top:10px; right:10px;
+  width:36px; height:36px; border:none; border-radius:8px;
+  background:rgba(255,255,255,0.9); color:#111;
+  cursor:pointer; font-size:18px; line-height:36px;
+  box-shadow:0 6px 14px rgba(0,0,0,0.25);
+}
+.lightbox-close:hover{ transform:translateY(-1px) }
+
+/* Responsive scaling */
+@media(max-width:900px){
+  :root{--card-w:180px;--card-h:240px}
+  .carousel{width:700px;height:320px}
+}
+@media(max-width:600px){
+  :root{--card-w:140px;--card-h:190px}
+  .carousel{width:90vw;height:260px}
+}
+/* Lightbox container (unchanged) */
+.lightbox{ position:fixed; inset:0; z-index:9999; display:none; }
+.lightbox.active{ display:block; }
+.lightbox-backdrop{
+  position:absolute; inset:0;
+  background:rgba(0,0,0,0.65);
+  backdrop-filter:blur(4px);
+}
+
+/* Dialog keeps rounded corners and hides video overflow */
+.lightbox-dialog{
+  position:absolute; left:50%; top:50%;
+  transform:translate(-50%,-50%);
+  width:min(900px, 92vw);
+  background:#0f1320;
+  border-radius:16px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.45);
+  overflow:hidden;                    /* keep video clipped to rounded corners */
+}
+
+/* Video remains full-bleed inside dialog */
+.lightbox video{ display:block; width:100%; height:auto; background:black; }
+
+/* ✕ Close button — inset so it isn’t clipped by the rounded corner */
+.lightbox-close{
+  position:absolute;
+  /* was top:10px; left:10px; */
+  top:14px; 
+  left:14px;                           /* move slightly inward */
+  width:36px; height:36px;
+  border:none;
+  border-radius:999px;                 /* fully circular so it reads cleanly */
+  background:rgba(255,255,255,0.95);
+  color:#111;
+  cursor:pointer; font-size:18px; line-height:36px;
+  box-shadow:0 6px 14px rgba(0,0,0,0.25);
+  pointer-events:auto; position:relative; z-index:2;
+}
+.lightbox-close:hover{ transform:translateY(-1px); }
+/* back arrow (top-left, above everything) */
+.back-link{
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 1000;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid rgba(0,0,0,0.15);
+  border-radius: 999px;
+  background: rgba(255,255,255,0.8);
+  backdrop-filter: blur(6px);
+  color: #111;
+  font: 700 13px/1 Tahoma, sans-serif;
+  text-transform: lowercase;
+  cursor: pointer;
+  transition: transform .06s ease, background .15s ease, box-shadow .15s ease;
+}
+.back-link .arrow{ font-size: 16px; line-height: 1; }
+.back-link:hover{
+  background: rgba(255,255,255,0.95);
+  box-shadow: 0 4px 12px rgba(0,0,0,.12);
+  transform: translateY(-1px);
+}
+.back-link:active{ transform: translateY(0); }
+
+/* make tap target comfy on mobile */
+@media (max-width: 640px){
+  .back-link{ top: 12px; left: 12px; padding: 10px 14px; }
+}
+/* ultra-minimal back link like your screenshot */
+.back-min{
+  position:fixed;
+  top:18px; left:18px;
+  z-index:1000;
+  color:#fff;                      /* use white */
+  font:700 13px/1 Tahoma, sans-serif;
+  text-decoration:none;
+  text-transform:lowercase;
+  letter-spacing:.3px;
+  opacity:.9;
+  mix-blend-mode:difference;       /* stays visible on light/dark bg */
+  transition:opacity .15s ease, transform .12s ease;
+}
+.back-min:hover{ opacity:1; transform:translateX(-2px); }
+.back-min:active{ transform:translateX(-1px); }
+
+/* optional: a faint text shadow if you don't want mix-blend-mode */
+@supports not (mix-blend-mode:difference){
+  .back-min{ text-shadow:0 1px 2px rgba(0,0,0,.5); }
+}
+
+/* mobile nudge */
+@media (max-width:640px){
+  .back-min{ top:12px; left:12px; font-weight:700; }
+}

@@ -1,0 +1,86 @@
+/* ===== base ===== */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+:root{
+  --bg:#000;
+  --fg:#f2f5f7;      /* set to #9aff9a if you want green */
+  --scan:#ffffff08;  /* scanline tint */
+  --caret:#c6f2ff;   /* caret tint */
+  --topbar-h: 48px;  /* fixed bar height */
+}
+
+body{
+  min-height:100%;
+  background:var(--bg);
+  color:var(--fg);
+  font-family:Consolas, "Courier New", ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+}
+
+/* Fixed top bar stays visible on scroll */
+.topbar{
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--topbar-h);
+  z-index: 1001;                  /* above scanlines */
+  display: flex; align-items: flex-start;
+  padding: 14px clamp(16px, 5vw, 48px) 0;
+  background: linear-gradient(180deg, rgba(0,0,0,.85), rgba(0,0,0,0)); /* subtle fade */
+  pointer-events: none;           /* only the link is clickable */
+}
+
+/* Minimal HOME link (clickable) */
+.back-min{
+  display:inline-block;
+  pointer-events:auto;            /* clickable */
+  color:#fff;
+  text-decoration:none;
+  font:700 13px/1 Consolas,monospace;
+  letter-spacing:.3px;
+  text-transform:uppercase;
+  opacity:.9;
+  transition:opacity .15s ease, transform .12s ease;
+}
+.back-min:hover{ opacity:1; transform:translateX(-2px); }
+
+/* Page layout: pad content so it doesn't hide under the fixed bar */
+.wrap{
+  padding: calc(var(--topbar-h) + 12px) clamp(16px, 5vw, 48px) 64px;
+}
+
+/* Full-page CRT scanlines overlay (kept under the topbar) */
+.scanlines{
+  position:fixed; inset:0; pointer-events:none; z-index:999;
+  background:
+    linear-gradient(0deg, transparent 0%, rgba(255,255,255,.05) 50%, transparent 100%),
+    repeating-linear-gradient(0deg, var(--scan) 0 2px, transparent 2px 4px);
+  mix-blend-mode:screen;
+}
+
+/* Typed text */
+.output{
+  display:inline;
+  white-space:pre-wrap;
+  word-break:break-word;
+  line-height:1.52;
+  font-size:16px;
+  color:var(--fg);
+  text-shadow:0 0 1px rgba(255,255,255,.07);
+  max-width: 90ch;       /* readability; remove for edge-to-edge */
+}
+
+/* Caret */
+.caret{
+  display:inline-block;
+  width:8px; height:1.1em; vertical-align:-0.2em;
+  background:linear-gradient(#e8fdff, var(--caret));
+  opacity:.85; margin-left:4px;
+  animation: blink 1s steps(1,end) infinite;
+}
+@keyframes blink{ 50% { opacity:0 } }
+
+/* Small screens */
+@media (max-width:600px){
+  :root{ --topbar-h: 44px; }
+  .wrap{ padding: calc(var(--topbar-h) + 10px) 14px 48px; }
+  .output{ font-size:15px; line-height:1.56; max-width:84ch; }
+}

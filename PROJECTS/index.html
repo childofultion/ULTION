@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PROJECTS</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <a id="back-link" class="back-min" aria-label="Go back">← HOME</a>
+  <!-- Centered 3D scene -->
+  <div class="scene">
+    <div class="carousel" id="carousel">
+      <!-- Replace images whenever you’re ready; videos are set via data-video -->
+      <div class="card" data-video="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4">
+        <img src="https://picsum.photos/id/1003/800/1100" alt="Poster 1" />
+      </div>
+      <div class="card" data-video="https://samplelib.com/lib/preview/mp4/sample-5s.mp4">
+        <img src="https://picsum.photos/id/1015/800/1100" alt="Poster 2" />
+      </div>
+      <div class="card" data-video="https://media.githubusercontent.com/media/mdn/learning-area/main/html/multimedia-and-embedding/video-and-audio-content/rabbit320.mp4">
+        <img src="https://picsum.photos/id/1025/800/1100" alt="Poster 3" />
+      </div>
+      <div class="card" data-video="https://download.samplelib.com/mp4/sample-10s.mp4">
+        <img src="https://picsum.photos/id/1035/800/1100" alt="Poster 4" />
+      </div>
+      <div class="card" data-video="https://download.samplelib.com/mp4/sample-15s.mp4">
+        <img src="https://picsum.photos/id/1045/800/1100" alt="Poster 5" />
+      </div>
+      <div class="card" data-video="https://download.samplelib.com/mp4/sample-20s.mp4">
+        <img src="https://picsum.photos/id/1055/800/1100" alt="Poster 6" />
+      </div>
+      <div class="card" data-video="https://download.samplelib.com/mp4/sample-30s.mp4">
+        <img src="https://picsum.photos/id/1065/800/1100" alt="Poster 7" />
+      </div>
+    </div>
+    <div class="floor" aria-hidden="true"></div>
+  </div>
+
+  <!-- Video Lightbox -->
+  <div class="lightbox" id="lightbox" aria-hidden="true">
+    <div class="lightbox-backdrop" id="backdrop"></div>
+    <div class="lightbox-dialog" role="dialog" aria-modal="true" aria-label="Video Viewer">
+      <button class="lightbox-close" id="closeVideo" aria-label="Close">✕</button>
+      <video id="lightboxVideo" playsinline controls preload="metadata"></video>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ULTION</title>
+  <style>
+    /* ===== BASE STYLES ===== */
+    body {
+      background-color: #000;
+      color: #f2f2f2;
+      font-family: 'Courier New', monospace;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+      margin: 0;
+      position: relative;
+      perspective: 1000px;
+    }
+
+    /* ===== CRT EFFECT (subtle) ===== */
+    body::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.03) 0px,
+        rgba(255, 255, 255, 0.03) 1px,
+        transparent 2px,
+        transparent 3px
+      );
+      opacity: 0.15;
+      pointer-events: none;
+      z-index: 5;
+      mix-blend-mode: overlay;
+    }
+
+    body::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(255, 255, 255, 0.08), transparent 70%);
+      mix-blend-mode: screen;
+      opacity: 0.4;
+      pointer-events: none;
+      z-index: 4;
+    }
+
+    #terminal {
+      font-size: 1.4rem;
+      text-align: center;
+      white-space: pre;
+      text-shadow: 0 0 4px rgba(255,255,255,0.3);
+      transform: rotateX(1deg) rotateY(-1deg);
+      z-index: 10;
+      animation: flicker 5s infinite;
+    }
+
+    @keyframes flicker {
+      0%, 100% { opacity: 1; }
+      98% { opacity: 0.95; }
+    }
+
+    /* ===== COMMAND STYLING ===== */
+    .command {
+      cursor: pointer;
+      opacity: 0.85;
+      transition: all 0.3s ease;
+      display: block;
+      margin: 8px 0;
+      position: relative;
+      padding-left: 22px; /* Prevents jump when hover symbol appears */
+    }
+
+    .command::before {
+      content: "> ";
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .command:hover::before {
+      opacity: 0.8;
+    }
+
+    .command:hover {
+      color: #ffffff;
+      text-shadow: 0 0 10px rgba(255,255,255,0.6);
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 10px;
+      background-color: #f2f2f2;
+      margin-left: 2px;
+      animation: blink 0.9s steps(1) infinite;
+    }
+
+    @keyframes blink {
+      50% {
+        opacity: 0;
+      }
+    }
+
+    /* ===== SOFT EDGE GLOW ===== */
+    .crt-glow {
+      position: absolute;
+      inset: 0;
+      box-shadow: 0 0 100px rgba(255, 255, 255, 0.08) inset;
+      pointer-events: none;
+      z-index: 2;
+    }
+  </style>
+</head>
+<body>
+  <div id="terminal"></div>
+  <div class="crt-glow"></div>
+
+  <script>
+    const terminal = document.getElementById('terminal');
+    const introText = "WELCOME TO ULTION";
+    const commands = ["ABOUT", "PROJECTS", "STORE", "TENEBROUS"];
+    let index = 0;
+
+    function typeText() {
+      if (index < introText.length) {
+        terminal.textContent += introText.charAt(index);
+        index++;
+        setTimeout(typeText, 120);
+      } else {
+        setTimeout(deleteText, 1000);
+      }
+    }
+
+    function deleteText() {
+      if (index > 0) {
+        terminal.textContent = introText.substring(0, index - 1);
+        index--;
+        setTimeout(deleteText, 60);
+      } else {
+        setTimeout(() => {
+          terminal.innerHTML = "";
+          typeCommands(0);
+        }, 500);
+      }
+    }
+
+    function typeCommands(i) {
+      if (i < commands.length) {
+        const cmdDiv = document.createElement("div");
+        cmdDiv.classList.add("command");
+        terminal.appendChild(cmdDiv);
+        typeCommandText(cmdDiv, commands[i], 0, () => {
+          cmdDiv.addEventListener("click", () => alert(`Opening ${commands[i]}...`));
+          typeCommands(i + 1);
+        });
+      }
+    }
+
+    function typeCommandText(element, text, j, callback) {
+      if (j < text.length) {
+        element.textContent += text.charAt(j);
+        setTimeout(() => typeCommandText(element, text, j + 1, callback), 90);
+      } else {
+        callback();
+      }
+    }
+
+    // Start animation
+    typeText();
+  </script>
+</body>
+</html>

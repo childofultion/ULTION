@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ABOUT — ULTION</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Fixed top bar with HOME link -->
+  <header class="topbar">
+    <a id="back-link" class="back-min" aria-label="Go back">← HOME</a>
+  </header>
+
+  <!-- Full-bleed terminal output (no inner box) -->
+  <main class="wrap">
+    <pre id="output" class="output"></pre><span class="caret" aria-hidden="true"></span>
+  </main>
+
+  <!-- Gentle CRT overlay across whole page (kept under the topbar) -->
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>

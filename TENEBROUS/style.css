@@ -1,0 +1,219 @@
+/* ===== GLOBAL ===== */
+* { box-sizing: border-box; user-select: none; margin:0; padding:0; font-family: Tahoma, sans-serif; }
+html,body { width:100%; height:100%; }
+
+/* ===== BACKGROUND VIDEO + DESKTOP ===== */
+#bg-video { position: fixed; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; pointer-events:none; }
+.desktop { position: relative; width:100%; height:100%; z-index:1; }
+
+/* ===== ICONS (uniform, static) ===== */
+.icon {
+  position: absolute;
+  width: 80px;
+  text-align: center;
+  cursor: pointer;
+  color: white;
+  text-shadow: 1px 1px 2px #000;
+  z-index: 2;
+}
+.icon img { width:48px; height:48px; margin-bottom:6px; display:block; margin-left:auto; margin-right:auto; }
+.icon span { font-size:12px; display:block; }
+
+/* ===== WINDOWS ===== */
+.window {
+  display: none;
+  position: absolute;
+  top: 90px;
+  left: 120px;
+  width: 420px;
+  height: 300px;
+  background: linear-gradient(180deg,#ece9d8,#dcd9c0);
+  border: 2px solid #404040;
+  border-top-color:#808080; border-left-color:#808080;
+  border-radius:4px; box-shadow:4px 4px 14px rgba(0,0,0,0.5);
+  z-index: 3;
+}
+.window.active { display:block; }
+.title-bar {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:6px 10px; background:linear-gradient(to bottom,#0a64ad,#004e9a); color:#fff; font-weight:700; cursor:move;
+}
+.close-btn { background:#c0392b; color:#fff; border:none; width:22px; height:22px; border-radius:3px; cursor:pointer; }
+.close-btn:hover { background:#e74c3c; }
+.window-content { padding:10px; color:#111; height: calc(100% - 28px); }
+
+/* ===== NOTEPAD STYLES ===== */
+#notepad .window-content{ padding:0; display:flex; flex-direction:column; }
+#note-toolbar{
+  background:#e5e5e5; border-bottom:1px solid #b9b9b9;
+  padding:6px; display:flex; gap:6px;
+}
+#note-toolbar button{
+  font-size:12px; padding:4px 10px; cursor:pointer;
+  border:1px solid #888; background:linear-gradient(#fff,#ddd);
+}
+#note-toolbar button:hover{ filter:brightness(1.05); }
+#note-text{
+  flex:1; width:100%; border:0; outline:0; padding:10px;
+  font:13px/1.4 "Courier New", monospace; background:#fff; color:#000; resize:none;
+}
+
+/* ===== TASKBAR ===== */
+.taskbar {
+  position: fixed; left:0; right:0; bottom:0; height:36px;
+  display:flex; align-items:center; padding:0 10px;
+  background: linear-gradient(to top,#245edb,#3a7efc);
+  z-index: 20;
+}
+.start-button {
+  background: linear-gradient(to bottom,#4caf50,#2e7d32);
+  color: #fff; border:1px solid #1b5e20; border-radius:4px; padding:4px 10px; cursor:pointer; font-weight:700;
+}
+.taskbar-tasks { display:flex; gap:8px; margin-left:10px; align-items:center; flex:1; }
+.task {
+  display:flex; align-items:center; gap:6px; padding:4px 8px; border-radius:3px; cursor:pointer; font-weight:600;
+  transition: background 0.12s, color 0.12s;
+  background: linear-gradient(to bottom,#e6e6e6,#c0c0c0); color:#000; border:1px solid #808080; /* minimized / solid look */
+}
+.task.open {
+  background: linear-gradient(to bottom,#0a64ad,#004e9a); color:#fff; border:1px solid #003366; /* highlighted when open */
+}
+.task img { width:16px; height:16px; }
+
+/* clock on the right */
+.clock { margin-left:auto; color:#fff; font-weight:700; font-size:13px; }
+
+/* ===== START MENU (polished XP) ===== */
+.start-menu {
+  position: fixed; left:10px; bottom:36px; width:220px; z-index:30;
+  background:#c0c0c0; border:2px solid #808080; border-radius:6px; box-shadow:3px 3px 8px rgba(0,0,0,0.3);
+  display:none; flex-direction:column; padding:8px;
+}
+.start-menu button {
+  display:flex; align-items:center; gap:8px; background:transparent; border:none; padding:8px 10px; cursor:pointer;
+  color:#000; font-weight:700; text-align:left;
+}
+.start-menu button:hover { background:#0a64ad; color:#fff; }
+.start-sep { height:1px; background:rgba(0,0,0,0.08); margin:8px 0; }
+
+/* shutdown button style */
+.shutdown-btn { background:#e81123; color:#fff; border:2px inset #a80000; padding:8px 10px; }
+
+/* ===== SHUTDOWN OVERLAY (black + popup window) ===== */
+.shutdown-screen {
+  position: fixed; inset:0; background:#000; display:none; justify-content:center; align-items:center; z-index:99999;
+  opacity: 0; transition: opacity 1.4s ease;
+}
+.shutdown-screen.show { opacity: 1; }
+
+.shutdown-dialog{
+  width:340px;
+  background:linear-gradient(180deg,#ece9d8 0%,#dcd9c0 100%);
+  border:2px solid #404040;
+  border-top-color:#808080; border-left-color:#808080;
+  border-radius:4px;
+  box-shadow:0 18px 50px rgba(0,0,0,.55);
+  overflow:hidden;
+  transform:scale(.98) translateY(-6px);
+  opacity:0; transition:opacity .22s ease, transform .22s ease;
+}
+.shutdown-screen.show .shutdown-dialog{ opacity:1; transform:scale(1) translateY(0); }
+
+.shutdown-dialog .title-bar{
+  background:linear-gradient(to bottom,#0a64ad,#004e9a);
+  color:#fff; font-weight:bold; padding:6px 10px; border-bottom:1px solid rgba(0,0,0,.2);
+}
+.popup-body{ padding:16px; color:#000; text-align:center; font-size:14px; }
+.popup-actions{ margin-top:14px; display:flex; justify-content:center; }
+.ok-btn{
+  padding:6px 16px; font-weight:700; cursor:pointer;
+  border:1px solid #888; background:linear-gradient(#fff,#ddd); border-radius:3px;
+}
+.ok-btn:hover{ filter:brightness(1.05); }
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeIn { from{opacity:0; transform: translateY(10px);} to{opacity:1; transform:none;} }
+/* System tray (next to clock) */
+.tray{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-right:12px;           /* a little space before the clock */
+}
+.tray a{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:22px; height:22px;     /* small XP-ish hit target */
+  border-radius:4px;
+  border:1px solid rgba(0,0,0,0.15);
+  background: linear-gradient(to bottom, rgba(255,255,255,0.35), rgba(255,255,255,0.08));
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.15);
+  transition: filter .12s ease, background .12s ease, transform .05s ease;
+}
+.tray a:hover{
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+}
+.tray img{
+  width:16px; height:16px; display:block;
+}
+.tray a:hover img { filter: brightness(1.2) saturate(1.2); }
+/* Slightly shrink ONLY the Notepad desktop icon */
+.icon[data-window="notepad"] img { width:42px; height:42px; }
+.icon[data-window="notepad"] { width:76px; } /* keeps label centered nicely */
+/* ===== BOOT SCREEN ===== */
+#boot-screen{
+  position:fixed; inset:0; z-index:99998;
+  background:#000 radial-gradient(120% 80% at 50% 50%, rgba(255,255,255,0.06), transparent 60%);
+  display:flex; align-items:center; justify-content:center;
+  opacity:1; transition:opacity .6s ease;
+}
+#boot-screen.hide{ opacity:0; pointer-events:none; }
+
+.boot-panel{
+  width:360px; max-width:82vw;
+  background:linear-gradient(180deg,#ece9d8 0%, #dcd9c0 100%);
+  border:2px solid #404040; border-top-color:#808080; border-left-color:#808080;
+  border-radius:6px; box-shadow:0 24px 60px rgba(0,0,0,.55);
+  padding:18px 20px; text-align:center;
+}
+
+.boot-logo{
+  font:700 22px/1 Tahoma, sans-serif;
+  color:#0b5dab; letter-spacing:0.5px; margin-bottom:8px;
+  text-shadow:0 1px 0 rgba(255,255,255,.4);
+}
+.boot-sub{
+  color:#000; opacity:.9; margin-bottom:14px; font-weight:700;
+}
+
+.boot-progress{
+  height:12px; border-radius:6px; overflow:hidden;
+  background:linear-gradient(#bcbcbc,#a6a6a6);
+  border:1px solid #7d7d7d; box-shadow:inset 0 1px 0 rgba(255,255,255,.6);
+}
+.boot-progress span{
+  display:block; height:100%; width:0%;
+  background:linear-gradient(to right, #0a64ad, #3a86e9);
+  animation: bootFill 1.6s ease forwards, bootPulse 1.6s ease-in-out 1.6s 1 forwards;
+}
+
+@keyframes bootFill   { from{width:0%} to{width:86%} }
+@keyframes bootPulse  { from{filter:brightness(1)} to{filter:brightness(1.08)} }
+/* Boot logo image */
+.boot-logo-img{
+  display:block;
+  width:min(180px, 60%);
+  margin:0 auto 8px;
+  image-rendering:-webkit-optimize-contrast;
+}
+
+/* Spin the image (remove this class if your GIF is already animated) */
+.spin{ animation: bootSpin 4s linear infinite; }
+@keyframes bootSpin { to { transform: rotate(360deg); } }
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .spin{ animation: none !important; }
+}
