@@ -99,3 +99,38 @@ body::after{content:""; position:fixed; inset:-50%; pointer-events:none; opacity
   :root{ --card-w:135px; --card-h:185px }
   .carousel{ width:94vw; height:250px }
 }
+/* ✅ FIX: Proper mobile centering for carousel */
+@media (max-width: 600px) {
+  .scene {
+    top: 57%;                        /* lower the wheel */
+    height: 90vh;                    /* use more screen */
+    transform: translate(-50%, -50%);
+  }
+
+  .carousel {
+    height: 60vh !important;         /* show the poster fully */
+    width: 100vw !important;
+  }
+
+  /* keep the center card fully in view */
+  .card.center {
+    transform: translate3d(0, -10px, 420px) scale(1.22) !important;
+  }
+
+  /* allow swipe + scroll */
+  .carousel {
+    touch-action: pan-y;
+  }
+}
+
+/* Extra small phones */
+@media (max-width: 380px) {
+  :root {
+    --card-w:125px;
+    --card-h:170px;
+  }
+
+  .scene {
+    top: 60%;
+  }
+}
