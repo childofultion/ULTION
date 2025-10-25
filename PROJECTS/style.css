@@ -211,4 +211,21 @@ body::before{
     --card-w:76vw;
     --card-h:42vh;
   }
+}/* ✅ Final alignment fix for iPhones */
+@media (max-width: 600px) {
+
+  .carousel {
+    transform: translate(-55%, -48%) !important;
+  }
+
+  .card.center {
+    transform: translate3d(0, -2vh, 370px) scale(1.22) !important;
+  }
+}
+
+/* Extra-small screens */
+@media (max-width: 380px) {
+  .carousel {
+    transform: translate(-56%, -46%) !important;
+  }
 }
