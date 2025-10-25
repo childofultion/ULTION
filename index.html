@@ -1,64 +1,138 @@
-<script>
-const terminal = document.getElementById('terminal');
-const introText = "WELCOME TO ULTION";
-const commands = [
-  { label: "ABOUT", url: "ABOUT/index.html" },
-  { label: "PROJECTS", url: "PROJECTS/index.html" },
-  { label: "STORE", url: "https://store.childofultion.com" },
-  { label: "TENEBROUS", url: "TENEBROUS/index.html" }
-];
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ULTION</title>
+  <style>
+    /* ===== BASE ===== */
+    :root { --fg:#f2f2f2; --bg:#000; }
+    html,body{height:100%}
+    body{
+      margin:0; background:#000; color:var(--fg);
+      font-family: Consolas, "Courier New", monospace;
+      display:flex; align-items:center; justify-content:center;
+      overflow:hidden; perspective:1000px; position:relative;
+    }
+    /* subtle CRT */
+    body::before{
+      content:""; position:absolute; inset:0; z-index:2; pointer-events:none;
+      background:repeating-linear-gradient(to bottom,
+        rgba(255,255,255,.03) 0 1px, transparent 2px 3px);
+      opacity:.15; mix-blend-mode:overlay;
+    }
+    body::after{
+      content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
+      background:radial-gradient(circle at 50% 50%, rgba(255,255,255,.1), transparent 65%);
+      opacity:.5; mix-blend-mode:screen;
+    }
 
-let index = 0;
+    #terminal{
+      position:relative; z-index:3; text-align:center; white-space:pre-wrap;
+      transform:rotateX(1deg) rotateY(-1deg);
+      text-shadow:0 0 4px rgba(255,255,255,.35);
+      font-size:clamp(18px, 2.8vw, 28px);
+      line-height:1.7;
+    }
+    .cursor{display:inline-block; width:.6ch; background:var(--fg); animation:blink .9s steps(1) infinite}
+    @keyframes blink{50%{opacity:0}}
 
-function typeText() {
-  if (index < introText.length) {
-    terminal.textContent += introText.charAt(index);
-    index++;
-    setTimeout(typeText, 120);
-  } else {
-    setTimeout(deleteText, 1000);
-  }
-}
+    /* Commands */
+    .menu{ margin-top:10px }
+    .command{
+      display:block; margin:.35rem 0; position:relative; padding-left:1.4ch;
+      cursor:pointer; opacity:.9; transition:filter .2s ease, opacity .2s ease;
+    }
+    .command::before{
+      content:">"; position:absolute; left:0; top:0; opacity:0; transition:opacity .2s;
+    }
+    .command:hover::before, .command:focus-visible::before{ opacity:.85 }
+    .command:hover, .command:focus-visible{
+      outline:none; filter:drop-shadow(0 0 6px rgba(255,255,255,.6)); opacity:1;
+    }
+    .sr-only{
+      position:absolute!important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden;
+      clip:rect(0,0,0,0); white-space:nowrap; border:0;
+    }
+  </style>
+</head>
+<body>
+  <div id="terminal" aria-live="polite"></div>
 
-function deleteText() {
-  if (index > 0) {
-    terminal.textContent = introText.substring(0, index - 1);
-    index--;
-    setTimeout(deleteText, 60);
-  } else {
-    setTimeout(() => {
-      terminal.innerHTML = "";
-      typeCommands(0);
-    }, 500);
-  }
-}
+  <script>
+    // ---------- Config ----------
+    const INTRO = "WELCOME TO ULTION";
+    const COMMANDS = [
+      { label: "ABOUT",     href: "ABOUT/" },
+      { label: "PROJECTS",  href: "PROJECTS/" },
+      { label: "STORE",     href: "https://store.childofultion.com", external: true },
+      { label: "TENEBROUS", href: "TENEBROUS/" }
+    ];
 
-function typeCommands(i) {
-  if (i < commands.length) {
-    const cmdDiv = document.createElement("div");
-    cmdDiv.classList.add("command");
-    terminal.appendChild(cmdDiv);
-    typeCommandText(cmdDiv, commands[i].label, 0, () => {
+    // ---------- Helpers ----------
+    const term = document.getElementById('terminal');
 
-      // ✅ MAKE COMMANDS CLICKABLE (REAL NAVIGATION)
-      cmdDiv.addEventListener("click", () => {
-        window.location.href = commands[i].url;
+    function type(el, text, speed, done){
+      let i = 0;
+      const tick = () => {
+        el.textContent += text[i++];
+        if (i < text.length) setTimeout(tick, speed);
+        else done && done();
+      };
+      tick();
+    }
+    function backspace(el, speed, done){
+      const tick = () => {
+        const t = el.textContent;
+        if (t.length) { el.textContent = t.slice(0, -1); setTimeout(tick, speed); }
+        else done && done();
+      };
+      tick();
+    }
+
+    // ---------- Build interactive menu ----------
+    function showMenu(){
+      const wrap = document.createElement('div');
+      wrap.className = 'menu';
+      // add items sequentially with typing
+      const addItem = (idx=0) => {
+        if (idx >= COMMANDS.length) return;
+        const a = document.createElement('a');
+        a.className = 'command';
+        a.href = COMMANDS[idx].href;
+        if (COMMANDS[idx].external) a.target = "_self"; // still navigate same tab
+
+        // keyboard activate
+        a.setAttribute('role','link'); a.tabIndex = 0;
+        a.addEventListener('keydown', (e)=>{
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); a.click(); }
+        });
+
+        wrap.appendChild(a);
+        type(a, COMMANDS[idx].label, 55, () => addItem(idx+1));
+      };
+      term.appendChild(wrap);
+      addItem(0);
+    }
+
+    // ---------- Boot animation ----------
+    (function boot(){
+      const line = document.createElement('div');
+      term.appendChild(line);
+
+      type(line, INTRO, 95, () => {
+        setTimeout(() => {
+          backspace(line, 45, () => {
+            // caret
+            const caret = document.createElement('span');
+            caret.className = 'cursor';
+            line.appendChild(caret);
+            // then build menu after a beat
+            setTimeout(() => { line.remove(); showMenu(); }, 450);
+          });
+        }, 800);
       });
-
-      typeCommands(i + 1);
-    });
-  }
-}
-
-function typeCommandText(element, text, j, callback) {
-  if (j < text.length) {
-    element.textContent += text.charAt(j);
-    setTimeout(() => typeCommandText(element, text, j + 1, callback), 70);
-  } else {
-    callback();
-  }
-}
-
-// ✅ START ANIMATION
-typeText();
-</script>
+    })();
+  </script>
+</body>
+</html>
