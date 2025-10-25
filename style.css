@@ -28,7 +28,21 @@ body {
   margin: 10px 0;
   font-size: 1.1rem;
 }
-
+/* Force terminal links to be white, no underline */
+a.command {
+  color: #f2f2f2;
+  text-decoration: none;
+}
+a.command:visited {
+  color: #f2f2f2;
+}
+a.command:hover,
+a.command:active,
+a.command:focus {
+  color: #ffffff;
+  text-decoration: none;
+  outline: none;
+}
 .option {
   color: white;
   cursor: pointer;
