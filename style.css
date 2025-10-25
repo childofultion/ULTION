@@ -28,21 +28,7 @@ body {
   margin: 10px 0;
   font-size: 1.1rem;
 }
-/* Force terminal links to be white, no underline */
-a.command {
-  color: #f2f2f2;
-  text-decoration: none;
-}
-a.command:visited {
-  color: #f2f2f2;
-}
-a.command:hover,
-a.command:active,
-a.command:focus {
-  color: #ffffff;
-  text-decoration: none;
-  outline: none;
-}
+
 .option {
   color: white;
   cursor: pointer;
@@ -55,4 +41,28 @@ a.command:focus {
 
 .hidden {
   display: none;
+}
+/* Force white links (no underline) in the terminal */
+#terminal a {
+  color: #f2f2f2 !important;
+  text-decoration: none !important;
+  font: inherit;              /* keep same size/weight as the rest */
+  letter-spacing: inherit;
+  display: block;
+  margin: 8px 0;
+  position: relative;
+  padding-left: 22px;         /* keeps the hover ">" alignment */
+}
+
+#terminal a:visited {
+  color: #f2f2f2 !important;
+}
+
+#terminal a:hover,
+#terminal a:focus,
+#terminal a:active {
+  color: #ffffff !important;
+  text-decoration: none !important;
+  outline: none;
+  text-shadow: 0 0 10px rgba(255,255,255,0.6);
 }
