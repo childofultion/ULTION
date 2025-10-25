@@ -1,138 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ULTION</title>
-  <style>
-    /* ===== BASE ===== */
-    :root { --fg:#f2f2f2; --bg:#000; }
-    html,body{height:100%}
-    body{
-      margin:0; background:#000; color:var(--fg);
-      font-family: Consolas, "Courier New", monospace;
-      display:flex; align-items:center; justify-content:center;
-      overflow:hidden; perspective:1000px; position:relative;
-    }
-    /* subtle CRT */
-    body::before{
-      content:""; position:absolute; inset:0; z-index:2; pointer-events:none;
-      background:repeating-linear-gradient(to bottom,
-        rgba(255,255,255,.03) 0 1px, transparent 2px 3px);
-      opacity:.15; mix-blend-mode:overlay;
-    }
-    body::after{
-      content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
-      background:radial-gradient(circle at 50% 50%, rgba(255,255,255,.1), transparent 65%);
-      opacity:.5; mix-blend-mode:screen;
-    }
-
-    #terminal{
-      position:relative; z-index:3; text-align:center; white-space:pre-wrap;
-      transform:rotateX(1deg) rotateY(-1deg);
-      text-shadow:0 0 4px rgba(255,255,255,.35);
-      font-size:clamp(18px, 2.8vw, 28px);
-      line-height:1.7;
-    }
-    .cursor{display:inline-block; width:.6ch; background:var(--fg); animation:blink .9s steps(1) infinite}
-    @keyframes blink{50%{opacity:0}}
-
-    /* Commands */
-    .menu{ margin-top:10px }
-    .command{
-      display:block; margin:.35rem 0; position:relative; padding-left:1.4ch;
-      cursor:pointer; opacity:.9; transition:filter .2s ease, opacity .2s ease;
-    }
-    .command::before{
-      content:">"; position:absolute; left:0; top:0; opacity:0; transition:opacity .2s;
-    }
-    .command:hover::before, .command:focus-visible::before{ opacity:.85 }
-    .command:hover, .command:focus-visible{
-      outline:none; filter:drop-shadow(0 0 6px rgba(255,255,255,.6)); opacity:1;
-    }
-    .sr-only{
-      position:absolute!important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden;
-      clip:rect(0,0,0,0); white-space:nowrap; border:0;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ULTION</title>
+<style>
+  body {
+    background:#000; color:#f2f2f2;
+    font-family: Consolas, "Courier New", monospace;
+    display:flex; justify-content:center; align-items:center;
+    height:100vh; margin:0; text-align:center;
+  }
+  #terminal { white-space:pre-wrap; line-height:1.7; }
+  .command {
+    cursor:pointer; margin:.4rem 0;
+    position:relative; padding-left:1.2ch;
+    display:block; opacity:.85;
+  }
+  .command::before {
+    content:">"; position:absolute; left:0; opacity:0;
+    transition:.15s;
+  }
+  .command:hover::before {
+    opacity:.9;
+  }
+  .command:hover {
+    opacity:1;
+    text-shadow:0 0 6px #fff;
+  }
+</style>
 </head>
 <body>
-  <div id="terminal" aria-live="polite"></div>
 
-  <script>
-    // ---------- Config ----------
-    const INTRO = "WELCOME TO ULTION";
-    const COMMANDS = [
-      { label: "ABOUT",     href: "ABOUT/" },
-      { label: "PROJECTS",  href: "PROJECTS/" },
-      { label: "STORE",     href: "https://store.childofultion.com", external: true },
-      { label: "TENEBROUS", href: "TENEBROUS/" }
-    ];
+<div id="terminal"></div>
 
-    // ---------- Helpers ----------
-    const term = document.getElementById('terminal');
+<script>
+const terminal = document.getElementById("terminal");
+const intro = "WELCOME TO ULTION";
+const pages = [
+  { text:"ABOUT",     url:"ABOUT/index.html" },
+  { text:"PROJECTS",  url:"PROJECTS/index.html" },
+  { text:"STORE",     url:"https://store.childofultion.com" },
+  { text:"TENEBROUS", url:"TENEBROUS/index.html" }
+];
 
-    function type(el, text, speed, done){
-      let i = 0;
-      const tick = () => {
-        el.textContent += text[i++];
-        if (i < text.length) setTimeout(tick, speed);
-        else done && done();
-      };
-      tick();
-    }
-    function backspace(el, speed, done){
-      const tick = () => {
-        const t = el.textContent;
-        if (t.length) { el.textContent = t.slice(0, -1); setTimeout(tick, speed); }
-        else done && done();
-      };
-      tick();
-    }
+let i = 0;
 
-    // ---------- Build interactive menu ----------
-    function showMenu(){
-      const wrap = document.createElement('div');
-      wrap.className = 'menu';
-      // add items sequentially with typing
-      const addItem = (idx=0) => {
-        if (idx >= COMMANDS.length) return;
-        const a = document.createElement('a');
-        a.className = 'command';
-        a.href = COMMANDS[idx].href;
-        if (COMMANDS[idx].external) a.target = "_self"; // still navigate same tab
+function typeIntro() {
+  if(i < intro.length){
+    terminal.textContent += intro[i++];
+    setTimeout(typeIntro, 90);
+  } else {
+    setTimeout(removeIntro, 700);
+  }
+}
 
-        // keyboard activate
-        a.setAttribute('role','link'); a.tabIndex = 0;
-        a.addEventListener('keydown', (e)=>{
-          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); a.click(); }
-        });
+function removeIntro() {
+  if(i > 0){
+    terminal.textContent = intro.slice(0, --i);
+    setTimeout(removeIntro, 50);
+  } else {
+    showMenu();
+  }
+}
 
-        wrap.appendChild(a);
-        type(a, COMMANDS[idx].label, 55, () => addItem(idx+1));
-      };
-      term.appendChild(wrap);
-      addItem(0);
-    }
+function showMenu() {
+  terminal.innerHTML = "";
+  pages.forEach(info => {
+    const a = document.createElement("a");
+    a.textContent = info.text;
+    a.className = "command";
+    a.href = info.url;
+    a.addEventListener("click", () => window.location = info.url);
+    terminal.appendChild(a);
+  });
+}
 
-    // ---------- Boot animation ----------
-    (function boot(){
-      const line = document.createElement('div');
-      term.appendChild(line);
-
-      type(line, INTRO, 95, () => {
-        setTimeout(() => {
-          backspace(line, 45, () => {
-            // caret
-            const caret = document.createElement('span');
-            caret.className = 'cursor';
-            line.appendChild(caret);
-            // then build menu after a beat
-            setTimeout(() => { line.remove(); showMenu(); }, 450);
-          });
-        }, 800);
-      });
-    })();
-  </script>
+typeIntro();
+</script>
 </body>
 </html>
