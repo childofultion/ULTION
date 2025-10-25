@@ -29,7 +29,8 @@
   function render(idx){
     const isMobile = window.innerWidth < 600;
     const mobileXOffset = isMobile ? -40 : 0;   // push wheel left on mobile
-    const mobileYOffset = isMobile ? 70 : 0;    // lower wheel on mobile
+    // lower the wheel a LOT more on iPhone
+const mobileYOffset = isMobile ? (window.innerHeight * 0.18) : 0;    // lower wheel on mobile
 
     for(let k=0;k<total;k++){
       const angleDeg = (k*stepDeg) - (idx*stepDeg);
