@@ -2,18 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>PROJECTS</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- back -->
-  <a id="back-link" class="back-min" href="https://liveoffsilence.com" aria-label="Go home">← home</a>
+  <!-- Back (works even if JS is off) -->
+  <a id="back-link" class="back-min" href="https://liveoffsilence.com">← home</a>
 
-  <!-- Scene -->
+  <!-- Centered 3D scene -->
   <div class="scene">
     <div class="carousel" id="carousel">
-      <!-- Replace images whenever you’re ready; videos are set via data-video -->
+      <!-- Update images/videos as you wish -->
       <div class="card" data-video="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4">
         <img src="https://picsum.photos/id/1003/800/1100" alt="Poster 1" />
       </div>
@@ -29,13 +29,9 @@
       <div class="card" data-video="https://download.samplelib.com/mp4/sample-15s.mp4">
         <img src="https://picsum.photos/id/1045/800/1100" alt="Poster 5" />
       </div>
-      <div class="card" data-video="https://download.samplelib.com/mp4/sample-20s.mp4">
-        <img src="https://picsum.photos/id/1055/800/1100" alt="Poster 6" />
-      </div>
-      <div class="card" data-video="https://download.samplelib.com/mp4/sample-30s.mp4">
-        <img src="https://picsum.photos/id/1065/800/1100" alt="Poster 7" />
-      </div>
     </div>
+
+    <!-- Optional glow -->
     <div class="floor" aria-hidden="true"></div>
   </div>
 
