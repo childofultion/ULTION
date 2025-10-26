@@ -1,141 +1,71 @@
 :root{
-  /* desktop defaults */
-  --card-w: 260px;
-  --card-h: 360px;
-
-  --bg1:#f7fbff;
-  --bg2:#e6f3ff;
+  --bg1:#f7fbff; --bg2:#e6f3ff;
+  --desk-w: 320px;            /* desktop card width */
+  --desk-h: 440px;
 }
 
-/* reset */
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{
-  width:100%;
-  height:100%;
-  min-height:100svh;                 /* iOS safe viewport */
-  background:linear-gradient(180deg,var(--bg1),var(--bg2));
-  font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial;
-  overflow:hidden;
-}
+html,body{height:100%;overflow:hidden;background:linear-gradient(180deg,var(--bg1),var(--bg2));
+  font-family:ui-sans-serif,system-ui,"Segoe UI",-apple-system,"Helvetica Neue",Arial}
 
-/* Back link (always black) */
-.back-min{
-  position:fixed;
-  top: max(12px, env(safe-area-inset-top));
-  left:max(12px, env(safe-area-inset-left));
-  z-index:1000;
-  color:#111;
-  font:700 15px/1 Tahoma, sans-serif;
-  text-decoration:none;
-  letter-spacing:.2px;
-  opacity:.95;
-  transition:opacity .15s ease, transform .12s ease;
-}
-.back-min:hover{opacity:1; transform:translateX(-2px)}
+/* vignette */
+body::before{content:"";position:fixed;inset:0;pointer-events:none;
+  background:radial-gradient(60% 50% at 50% 40%,rgba(0,0,0,.05),transparent 55%),
+             radial-gradient(100% 80% at 50% 120%,rgba(0,0,0,.12),transparent 60%);
+  mix-blend-mode:multiply}
+body::after{content:"";position:fixed;inset:-50%;pointer-events:none;opacity:.08;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,.02) 0 2px,transparent 2px 4px);filter:blur(.2px)}
 
-/* ===== Centering & layout ===== */
-.scene{
-  position:fixed; inset:0;           /* full canvas; avoids translate bugs on iOS */
-  display:grid; place-items:center;
-  perspective:1200px;
-  padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
-}
+.back-min{position:fixed;top:16px;left:16px;z-index:10;color:#111;text-decoration:none;
+  font:700 16px/1.1 Tahoma,sans-serif;text-transform:lowercase;background:rgba(255,255,255,.75);
+  border:1px solid rgba(0,0,0,.13);border-radius:999px;padding:8px 12px;backdrop-filter:saturate(140%) blur(6px)}
+.back-min:hover{transform:translateX(-2px)}
 
-.carousel{
-  width: clamp(640px, 64vw, 860px);  /* a little smaller + nudged left visually */
-  height: clamp(280px, 46vh, 420px);
-  position:relative;
-  transform-style:preserve-3d;
-  will-change:transform;
-  cursor:grab;
-  touch-action: pan-y pinch-zoom;    /* allow page to scroll vertically if embedded */
-}
-.scene { justify-items: start; }     /* nudges whole ring a bit left on desktop */
+.stage{height:100svh;display:flex;align-items:center;justify-content:center}
+.floor{position:absolute;left:50%;transform:translateX(-50%);bottom:10%;width:min(84%,980px);height:140px;
+  pointer-events:none;background:radial-gradient(60% 40% at 50% 10%,rgba(120,180,240,.16),transparent 45%);
+  filter:blur(10px);mix-blend-mode:screen}
 
-/* Cards */
+/* snap carousel */
+.rail{
+  width:min(1040px,92vw);
+  display:flex; gap:22px; align-items:center;
+  overflow-x:auto; overscroll-behavior-x:contain;
+  scroll-snap-type:x mandatory; scroll-padding: 0 50%;
+  padding: 8vh 50%;
+}
+.rail::-webkit-scrollbar{height:10px}
+.rail::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15);border-radius:999px}
+.rail::-webkit-scrollbar-track{background:transparent}
+
 .card{
-  position:absolute;
-  left:50%; top:50%;
-  width:var(--card-w); height:var(--card-h);
-  border-radius:16px; overflow:hidden;
-  transform-origin:center center;
-  backface-visibility:hidden;
-  box-shadow:
-    0 22px 50px rgba(10,25,50,0.22),
-    inset 0 0 0 1px rgba(255,255,255,0.12),
-    inset 0 0 0 2px rgba(0,0,0,0.03);
-  transition:transform 300ms cubic-bezier(.2,.85,.2,1), filter 200ms, opacity 200ms;
-  will-change:transform, filter, opacity;
-  user-select:none;
+  scroll-snap-align:center;
+  flex:0 0 var(--desk-w);
+  height:var(--desk-h);
+  border:none; background:transparent; padding:0; margin:0; cursor:pointer;
+  border-radius:18px; overflow:hidden;
+  box-shadow:0 18px 40px rgba(5,15,30,.18), inset 0 0 0 1px rgba(255,255,255,.12), inset 0 0 0 2px rgba(0,0,0,.03);
+  transition:transform .25s ease, box-shadow .25s ease, filter .2s ease;
 }
-.card img{width:100%;height:100%;object-fit:cover;display:block}
-.card::after{
-  content:""; position:absolute; inset:0; pointer-events:none;
-  background:linear-gradient(20deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.00) 30%, rgba(255,255,255,0.06) 60%, rgba(255,255,255,0.00) 100%);
-  mix-blend-mode:screen;
-}
+.card:focus-visible{outline:2px solid #111}
+.card img{display:block;width:100%;height:100%;object-fit:cover}
+.card:hover{transform:translateY(-3px); box-shadow:0 40px 80px rgba(5,15,30,.30), inset 0 0 0 1px rgba(255,255,255,.13)}
 
-/* emphasis states */
-.card.center{
-  filter:saturate(1.05) contrast(1.04);
-  box-shadow:
-    0 36px 80px rgba(10,25,50,0.32),
-    inset 0 0 0 1px rgba(255,255,255,0.13);
-  z-index:999 !important;
-}
-.card.side{filter:saturate(.98) brightness(.99)}
-.card.far{opacity:.55; filter:blur(.5px) saturate(.88) brightness(.95)}
+/* lightbox */
+.lightbox{position:fixed;inset:0;z-index:999;display:none;align-items:center;justify-content:center}
+.lightbox.active{display:flex}
+.lightbox-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(4px)}
+.lightbox-dialog{position:relative;z-index:1;width:min(900px,92vw);border-radius:16px;overflow:hidden;background:#0f1320;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+.lightbox video{display:block;width:100%;height:auto;background:#000}
+.lightbox:not(.active) video{display:none!important}
+.lightbox-close{position:absolute;top:12px;left:12px;width:36px;height:36px;border:none;border-radius:999px;background:rgba(255,255,255,.95);color:#111;cursor:pointer;font-size:18px;line-height:36px;box-shadow:0 6px 14px rgba(0,0,0,.25)}
 
-/* soft vignette + grain */
-body::before{
-  content:""; position:fixed; inset:0; pointer-events:none;
-  background:
-    radial-gradient(60% 50% at 50% 40%, rgba(0,0,0,0.05), transparent 55%),
-    radial-gradient(100% 80% at 50% 120%, rgba(0,0,0,0.12), transparent 60%);
-  mix-blend-mode:multiply;
+@media (max-width: 900px){
+  :root{ --desk-w: 280px; --desk-h: 390px; }
+  .rail{gap:18px}
 }
-body::after{
-  content:""; position:fixed; inset:-50%; pointer-events:none; opacity:.08;
-  background:repeating-linear-gradient(0deg, rgba(0,0,0,.02) 0 2px, rgba(0,0,0,0) 2px 4px);
-  filter:blur(.2px);
-}
-
-/* floor glow */
-.floor{
-  position:absolute; left:50%; transform:translateX(-50%);
-  bottom:14%;
-  width:min(82%,980px); height:140px; pointer-events:none;
-  background:radial-gradient(60% 40% at 50% 10%, rgba(120,180,240,0.16), transparent 45%);
-  filter:blur(10px); mix-blend-mode:screen; z-index:0;
-}
-
-/* ===== Lightbox ===== */
-.lightbox{position:fixed; inset:0; z-index:9999; display:none}
-.lightbox.active{display:block}
-.lightbox-backdrop{position:absolute; inset:0; background:rgba(0,0,0,0.65); backdrop-filter:blur(4px)}
-.lightbox-dialog{
-  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
-  width:min(900px, 92vw); background:#0f1320; border-radius:16px;
-  box-shadow:0 20px 60px rgba(0,0,0,0.45); overflow:hidden
-}
-.lightbox video{display:block; width:100%; height:auto; background:#000}
-.lightbox-close{
-  position:absolute; top:14px; left:14px; width:40px; height:40px;
-  border:none; border-radius:999px; background:rgba(255,255,255,0.95); color:#111;
-  cursor:pointer; font-size:20px; line-height:40px; box-shadow:0 6px 14px rgba(0,0,0,0.25)
-}
-.lightbox-close:hover{transform:translateY(-1px)}
-
-/* ===== Mobile tuning ===== */
-@media (max-width: 800px){
-  :root{
-    --card-w: clamp(210px, 56vw, 320px);
-    --card-h: calc(var(--card-w) * 1.30);
-  }
-  .scene{ place-items:center }                   /* center on small screens */
-  .carousel{
-    width: min(94vw, 640px);
-    height: clamp(260px, 58vh, 420px);
-  }
-  .floor{ display:none; }                        /* cleaner on phones */
+@media (max-width: 640px){
+  :root{ --desk-w: 74vw; --desk-h: calc(var(--desk-w) * .66); }
+  .rail{width:100vw;padding: 14vh 50% 10vh}
+  .floor{display:none}
 }
