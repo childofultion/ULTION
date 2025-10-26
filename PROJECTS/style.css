@@ -2,58 +2,46 @@
   --bg1:#f7fbff;
   --bg2:#e6f3ff;
 
-  /* desktop base card size (auto scales down on small screens) */
-  --card-w: 260px;
-  --card-h: 360px;
-
-  /* desktop nudges */
-  --scene-shift-desktop: -6vw;   /* push carousel a bit to the left */
-  --scene-rise-desktop: 0svh;    /* vertical tweak if you want */
+  /* default card size; JS scales perspective so these stay reasonable */
+  --card-w: clamp(180px, 26vw, 340px);
+  --card-h: calc(var(--card-w) * 1.33);
 }
 
-/* Reset */
-*{ box-sizing:border-box; margin:0; padding:0; }
-html,body{ height:100%; }
-body{
-  min-height:100svh;             /* iOS dynamic viewport-safe */
-  overflow:hidden;
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{
+  width:100%;
+  height:100%;
   background:linear-gradient(180deg,var(--bg1),var(--bg2));
   font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial;
+  overflow:hidden;
 }
 
-/* Back link — always black */
-.back-min{
-  position:fixed;
-  top:calc(12px + env(safe-area-inset-top));
-  left:calc(12px + env(safe-area-inset-left));
-  z-index:1000;
-  color:#111;
-  text-decoration:none;
-  font:700 16px/1 Tahoma, sans-serif;
-  letter-spacing:.2px;
-  opacity:.95;
-  transition:opacity .15s ease, transform .12s ease;
-}
-.back-min:hover{ opacity:1; transform:translateX(-2px); }
-
-/* Scene centers content; we translate the carousel from here */
+/* center the scene; we’ll nudge it left on larger screens */
 .scene{
-  position:fixed; inset:0;
-  display:grid; place-items:center;
-  pointer-events:none; /* only carousel takes events */
+  position:absolute; top:50%; left:50%;
+  transform: translate(-50%,-50%);
+  width:100%; max-width:1100px; height:100dvh;
+  perspective:1200px;
+}
+
+/* Desktop: slightly smaller and pushed left */
+@media (min-width: 1000px){
+  .scene{
+    transform: translate(calc(-50% - 7vw), -50%);
+  }
 }
 
 /* Carousel core */
 .carousel{
-  pointer-events:auto;
+  width: clamp(720px, 68vw, 980px);
+  height: clamp(300px, 38vw, 420px);
   position:relative;
   transform-style:preserve-3d;
-  cursor:grab; touch-action:pan-y;
-  width: clamp(640px, 58vw, 880px);
-  height: clamp(300px, 42vw, 440px);
-  translate: var(--scene-shift-desktop) var(--scene-rise-desktop);
+  transition:transform 600ms cubic-bezier(.2,.85,.2,1);
+  cursor:grab; touch-action: pan-y;
+  -webkit-user-select:none; user-select:none;
 }
-.carousel.dragging{ cursor:grabbing; }
+.carousel.dragging{cursor:grabbing;transition:none}
 
 /* Cards */
 .card{
@@ -62,43 +50,36 @@ body{
   height:var(--card-h);
   left:50%; top:50%;
   transform-origin:center center;
-  border-radius:18px;
-  overflow:hidden;
-  backface-visibility:hidden;
+  border-radius:14px; overflow:hidden;
   box-shadow:
     0 18px 40px rgba(5,15,30,0.18),
     inset 0 0 0 1px rgba(255,255,255,0.12),
     inset 0 0 0 2px rgba(0,0,0,0.03);
   transition:transform 300ms cubic-bezier(.2,.85,.2,1), filter 200ms, opacity 200ms;
-  user-select:none;
+  backface-visibility:hidden; user-select:none;
 }
-.card img{ width:100%; height:100%; object-fit:cover; display:block; }
-
-/* sheen */
+.card img{width:100%;height:100%;object-fit:cover;display:block}
 .card::after{
   content:""; position:absolute; inset:0;
-  pointer-events:none;
-  background:linear-gradient(20deg,
-    rgba(255,255,255,0.10) 0%,
+  background:linear-gradient(20deg, rgba(255,255,255,0.10) 0%,
     rgba(255,255,255,0.00) 30%,
     rgba(255,255,255,0.06) 60%,
     rgba(255,255,255,0.00) 100%);
-  mix-blend-mode:screen;
+  mix-blend-mode:screen; pointer-events:none;
 }
 
-/* Emphasis */
+/* Emphasis states – NO transform override anymore */
 .card.center{
-  transform:translate3d(0,-8px,430px) scale(1.08)!important;
   z-index:999;
   box-shadow:
-    0 40px 80px rgba(5,15,30,0.32),
+    0 40px 80px rgba(5,15,30,0.35),
     inset 0 0 0 1px rgba(255,255,255,0.13);
   filter:saturate(1.05) contrast(1.04);
 }
-.card.side{ filter:saturate(.97) brightness(.99); }
-.card.far{ opacity:.55; filter: blur(.6px) saturate(.85) brightness(.95); }
+.card.side{filter:saturate(0.97) brightness(0.99)}
+.card.far{opacity:.6;filter:blur(.6px) saturate(.85) brightness(.95)}
 
-/* Vignette + grain */
+/* Subtle vignette + grain */
 body::before{
   content:""; position:fixed; inset:0; pointer-events:none;
   background:
@@ -112,55 +93,37 @@ body::after{
   filter:blur(.2px);
 }
 
-/* Floor glow */
+/* Floor glow (hidden on small screens) */
 .floor{
   position:absolute; left:50%; transform:translateX(-50%);
   bottom:18%;
-  width:min(82%,980px); height:140px; pointer-events:none;
+  width:min(82%,980px); height:140px;
+  pointer-events:none;
   background:radial-gradient(60% 40% at 50% 10%, rgba(120,180,240,0.16), transparent 45%);
   filter:blur(10px); mix-blend-mode:screen; z-index:0;
 }
+@media (max-width: 700px){ .floor{ display:none } }
 
-/* ===== Lightbox ===== */
-.lightbox{ position:fixed; inset:0; display:none; z-index:9999; }
-.lightbox.active{ display:block; }
-.lightbox-backdrop{ position:absolute; inset:0; background:rgba(0,0,0,.65); backdrop-filter:blur(4px); }
-.lightbox-dialog{
-  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
-  width:min(900px,92vw); background:#0f1320; border-radius:16px;
-  box-shadow:0 20px 60px rgba(0,0,0,.45); overflow:hidden;
+/* Back link – black, no blend tricks */
+.back-min{
+  position:fixed; top:18px; left:18px; z-index:1000;
+  color:#111; text-decoration:none;
+  font:700 16px/1 Tahoma, sans-serif;
+  letter-spacing:.2px;
+  opacity:.92;
+  transition:opacity .15s ease, transform .12s ease;
 }
-.lightbox video{ display:block; width:100%; height:auto; background:#000; }
-.lightbox-close{
-  position:absolute; top:14px; left:14px;
-  width:36px; height:36px; border:none; border-radius:999px;
-  background:rgba(255,255,255,.95); color:#111; font-size:18px; line-height:36px;
-  box-shadow:0 6px 14px rgba(0,0,0,.25); cursor:pointer;
-}
-.lightbox-close:hover{ transform:translateY(-1px); }
+.back-min:hover{ opacity:1; transform:translateX(-2px) }
 
-/* ===== Responsive tuning ===== */
-@media (max-width: 900px){
-  :root{ --card-w: 220px; --card-h: 300px; }
-  .carousel{ width: clamp(540px, 86vw, 700px); height: clamp(260px, 54vw, 340px); translate: 0 0; }
-}
-
-/* Mobile: fit nicely, centered, not gigantic */
-@media (max-width: 600px){
-  :root{
-    --card-w: clamp(210px, 68vw, 420px);
-    --card-h: calc(var(--card-w) * 1.28);
+/* Mobile sizing & centering */
+@media (max-width: 700px){
+  :root{ --card-w: clamp(150px, 60vw, 260px); --card-h: calc(var(--card-w) * 1.33); }
+  .scene{
+    width:100%;
+    transform: translate(-50%,-48%);   /* a hair higher */
   }
   .carousel{
     width: 100vw;
-    height: calc(var(--card-h) + 28px);
-    translate: 0 6svh;              /* sit a bit lower */
+    height: min(70vh, 520px);
   }
-  .floor{ display:none; }
-  .card.center{ transform:translate3d(0,-6px,400px) scale(1.04)!important; }
-}
-
-@media (max-width: 380px){
-  :root{ --card-w: clamp(190px, 70vw, 360px); --card-h: calc(var(--card-w) * 1.28); }
-  .carousel{ translate: 0 8svh; }
 }
