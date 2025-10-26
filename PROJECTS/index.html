@@ -7,31 +7,29 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- Back (works even if JS is off) -->
-  <a id="back-link" class="back-min" href="https://liveoffsilence.com">← home</a>
+  <!-- Back link (always black) -->
+  <a id="back-link" class="back-min" href="https://liveoffsilence.com" rel="noopener">← home</a>
 
-  <!-- Centered 3D scene -->
+  <!-- Centered scene -->
   <div class="scene">
     <div class="carousel" id="carousel">
-      <!-- Update images/videos as you wish -->
+      <!-- Use your real posters; 5 items is fine (JS will clone 2 to fill the ring) -->
       <div class="card" data-video="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4">
-        <img src="https://picsum.photos/id/1003/800/1100" alt="Poster 1" />
+        <img src="https://picsum.photos/id/1003/900/1200" alt="Poster 1">
       </div>
       <div class="card" data-video="https://samplelib.com/lib/preview/mp4/sample-5s.mp4">
-        <img src="https://picsum.photos/id/1015/800/1100" alt="Poster 2" />
+        <img src="https://picsum.photos/id/1015/900/1200" alt="Poster 2">
       </div>
       <div class="card" data-video="https://media.githubusercontent.com/media/mdn/learning-area/main/html/multimedia-and-embedding/video-and-audio-content/rabbit320.mp4">
-        <img src="https://picsum.photos/id/1025/800/1100" alt="Poster 3" />
+        <img src="https://picsum.photos/id/1025/900/1200" alt="Poster 3">
       </div>
       <div class="card" data-video="https://download.samplelib.com/mp4/sample-10s.mp4">
-        <img src="https://picsum.photos/id/1035/800/1100" alt="Poster 4" />
+        <img src="https://picsum.photos/id/1035/900/1200" alt="Poster 4">
       </div>
       <div class="card" data-video="https://download.samplelib.com/mp4/sample-15s.mp4">
-        <img src="https://picsum.photos/id/1045/800/1100" alt="Poster 5" />
+        <img src="https://picsum.photos/id/1045/900/1200" alt="Poster 5">
       </div>
     </div>
-
-    <!-- Optional glow -->
     <div class="floor" aria-hidden="true"></div>
   </div>
 
