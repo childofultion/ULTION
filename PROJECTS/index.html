@@ -122,5 +122,17 @@
       if (e.key === 'h' || buffer.endsWith('home')) window.location.href = 'https://liveoffsilence.com';
     });
   </script>
+  <script>
+(function () {
+  try {
+    var p = location.pathname;
+    // handles ".../index.html" (any case) at root or in folders
+    if (/\/index\.html?$/i.test(p)) {
+      var clean = p.replace(/index\.html?$/i, '') || '/';
+      history.replaceState(null, '', clean + location.search + location.hash);
+    }
+  } catch (e) {}
+})();
+</script>
 </body>
 </html>
