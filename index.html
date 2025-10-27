@@ -19,11 +19,11 @@
   }
 
   #terminal {
-  white-space:pre;
-  font-size:1.6rem;
-  line-height:2rem;
-  text-shadow:0 0 6px rgba(255,255,255,0.3);
-}
+    white-space:pre;
+    font-size:1.6rem;
+    line-height:2rem;
+    text-shadow:0 0 6px rgba(255,255,255,0.3);
+  }
 
   .command {
     cursor:pointer;
@@ -58,13 +58,14 @@
 <div id="terminal"></div>
 
 <script>
+// Terminal content
 const term = document.getElementById("terminal");
 const intro = "WELCOME TO ULTION";
 const pages = [
-  { text:"ABOUT",     url:"ABOUT/index.html" },
-  { text:"PROJECTS",  url:"PROJECTS/index.html" },
+  { text:"ABOUT",     url:"/ABOUT/" },
+  { text:"PROJECTS",  url:"/PROJECTS/" },
   { text:"STORE",     url:"https://store.liveoffsilence.com" },
-  { text:"TENEBROUS", url:"TENEBROUS/index.html" }
+  { text:"TENEBROUS", url:"/TENEBROUS/" }
 ];
 
 let i = 0;
@@ -112,6 +113,21 @@ function typeCommand(element, text, j, done) {
 
 // Start animation
 typeIntro();
+</script>
+
+<!-- ✅ Cleaner URL: removes /index.html from address bar -->
+<script>
+(function () {
+  try {
+    var url = new URL(window.location.href);
+    var path = url.pathname;
+
+    if (path.toLowerCase().endsWith('/index.html')) {
+      var cleaned = path.slice(0, -"/index.html".length) || "/";
+      history.replaceState(null, '', cleaned + url.search + url.hash);
+    }
+  } catch(e){}
+})();
 </script>
 
 </body>
