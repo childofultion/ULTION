@@ -3,62 +3,124 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Coming Soon — Live Off Silence</title>
+  <title>projects — coming soon</title>
   <meta name="robots" content="noindex">
   <style>
     :root{
-      --bg1:#0f1220; --bg2:#1b2038; --fg:#e9eefc; --muted:#a8b0c9;
-      --glass:rgba(255,255,255,.06); --stroke:rgba(255,255,255,.12);
-      --accent:#8ab4ff;
+      --bg:#0b0f14;       /* deep terminal bg */
+      --panel:#0e141b;    /* panel bg */
+      --fg:#c8f7c5;       /* soft green text */
+      --dim:#84a98c;      /* dimmed text */
+      --accent:#9ef0a7;   /* prompt green */
+      --border:#1b2733;   /* subtle border */
     }
-    *{box-sizing:border-box} html,body{height:100%}
+    *{box-sizing:border-box}
+    html,body{height:100%}
     body{
-      margin:0; color:var(--fg); background:radial-gradient(80% 60% at 50% 30%, var(--bg2), var(--bg1));
-      display:grid; place-items:center; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      overflow:hidden;
+      margin:0;
+      background:radial-gradient(70% 60% at 50% 20%, #101823, var(--bg));
+      color:var(--fg);
+      font: 15px/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      display:grid; place-items:center;
     }
-    .wrap{
-      width:min(720px, 92vw);
-      background:var(--glass);
-      border:1px solid var(--stroke);
-      border-radius:16px;
-      padding:28px 24px;
-      box-shadow:0 10px 50px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.04);
-      backdrop-filter: blur(6px);
-      text-align:center;
+
+    .term{
+      width:min(900px, 92vw);
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:10px;
+      padding:18px 16px 14px;
+      box-shadow:
+        0 20px 60px rgba(0,0,0,.55),
+        inset 0 0 0 1px rgba(255,255,255,.02);
     }
-    h1{margin:6px 0 10px; font-size:clamp(24px, 4.5vw, 44px); letter-spacing:.04em}
-    p{margin:0; color:var(--muted); font-size:clamp(14px, 2.8vw, 16px); line-height:1.5}
-    .row{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:18px}
-    .btn{
-      display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius:12px;
-      border:1px solid var(--stroke); color:var(--fg); text-decoration:none; background:rgba(255,255,255,.04);
-      transition:.15s ease; font-weight:600; font-size:14px
+
+    .hdr{
+      display:flex; align-items:center; gap:8px; margin-bottom:12px; opacity:.9;
+      color:var(--dim); font-size:12px; letter-spacing:.05em; text-transform:lowercase;
     }
-    .btn:hover{transform:translateY(-1px); background:rgba(255,255,255,.08)}
-    .pill{display:inline-block; padding:6px 10px; font-size:12px; border-radius:999px;
-      color:#0b1220; background:var(--accent); font-weight:700; letter-spacing:.06em; text-transform:uppercase}
-    .brand{font-weight:700; letter-spacing:.12em; text-transform:uppercase; opacity:.9}
-    .hint{margin-top:14px; font-size:12px; color:var(--muted)}
-    /* light mode */
+    .dot{width:10px;height:10px;border-radius:50%}
+    .dot.r{background:#ff5f57}.dot.y{background:#febc2e}.dot.g{background:#28c840}
+    .title{margin-left:auto; opacity:.8}
+
+    .line{display:block; white-space:pre-wrap; word-break:break-word}
+    .prompt{color:var(--accent)}
+    .dim{color:var(--dim)}
+    .cursor{
+      display:inline-block; width:8px; height:1.1em; translate:0 .2em;
+      background:var(--fg); margin-left:2px; animation:blink 1.05s steps(1) infinite;
+    }
+    @keyframes blink{50%{opacity:0}}
+
+    .links{margin-top:14px; display:flex; gap:12px; flex-wrap:wrap}
+    a{color:var(--fg); text-decoration:none; border-bottom:1px dotted var(--fg); opacity:.9}
+    a:hover{opacity:1; border-bottom-style:solid}
+
+    /* light mode (if your device uses it) */
     @media (prefers-color-scheme:light){
-      :root{ --bg1:#f7fbff; --bg2:#eaf3ff; --fg:#141821; --muted:#51607a; --glass:rgba(255,255,255,.8); --stroke:rgba(10,20,40,.08); --accent:#1a6dff;}
-      .btn{background:#fff}
+      :root{ --bg:#f7fbff; --panel:#ffffff; --fg:#123; --dim:#5a6b7b; --accent:#0b7a53; --border:#e8eef5 }
+      body{background:linear-gradient(180deg,#f7fbff,#eaf3ff)}
     }
   </style>
 </head>
 <body>
-  <main class="wrap">
-    <span class="pill">coming soon</span>
-    <h1 class="brand">Live Off Silence — Projects</h1>
-    <p>We’re putting the final touches on this page.<br/>Check back shortly or get notified when it goes live.</p>
-
-    <div class="row">
-      <a class="btn" href="mailto:hello@liveoffsilence.com">Notify me ↗</a>
-      <a class="btn" href="https://liveoffsilence.com">← back home</a>
+  <main class="term" aria-label="terminal">
+    <div class="hdr">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="title">liveoffsilence — terminal</span>
     </div>
 
-    <p class="hint">If you expected content here, it’s temporarily under maintenance.</p>
+    <div id="out" role="log" aria-live="polite">
+      <!-- lines get typed here -->
+    </div>
+
+    <div class="links">
+      <a href="https://liveoffsilence.com">← home</a>
+      <a href="mailto:hello@liveoffsilence.com">notify me</a>
+    </div>
   </main>
+
+  <script>
+    // ultra-minimal typer (no deps)
+    const out = document.getElementById('out');
+    const lines = [
+      {t: 'guest@liveoffsilence:~$ ', p: true},
+      {t: 'projects --status\n'},
+      {t: 'status: ', dim:true}, {t:'coming_soon\n'},
+      {t: 'path:   ', dim:true}, {t:'/projects\n'},
+      {t: 'tip:    ', dim:true}, {t:'press H to go home\n'}
+    ];
+
+    function addSpan(txt, cls){
+      const s = document.createElement('span');
+      s.textContent = txt;
+      s.className = cls || '';
+      out.appendChild(s);
+    }
+
+    (async function type(){
+      for (let i=0;i<lines.length;i++){
+        const {t, p, dim} = lines[i];
+        if (p) addSpan('guest@liveoffsilence:~$ ','prompt');
+        else {
+          for (let j=0;j<t.length;j++){
+            addSpan(t[j], dim ? 'dim' : '');
+            await new Promise(r=>setTimeout(r, 14)); // type speed
+          }
+        }
+      }
+      // blinking cursor
+      const cur = document.createElement('span');
+      cur.className = 'cursor';
+      out.appendChild(cur);
+    })();
+
+    // quick keyboard: H or "home" -> back to site root
+    let buffer = '';
+    window.addEventListener('keydown', (e)=>{
+      if (e.key.length === 1) buffer = (buffer + e.key).slice(-5).toLowerCase();
+      if (e.key === 'h' || buffer.endsWith('home')) window.location.href = 'https://liveoffsilence.com';
+    });
+  </script>
 </body>
 </html>
