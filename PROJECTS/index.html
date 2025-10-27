@@ -1,50 +1,81 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>PROJECTS</title>
-  <link rel="stylesheet" href="style-safe.css?v=1" />
-</head>
-<body>
-  <a id="back-link" class="back-min" href="https://liveoffsilence.com">← home</a>
+* {
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family: Tahoma, sans-serif;
+}
 
-  <div class="stage">
-    <div class="rail" id="rail">
-      <button class="card" data-video="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4">
-        <img src="https://picsum.photos/id/1003/1200/1600" alt="Poster 1">
-      </button>
-      <button class="card" data-video="https://samplelib.com/lib/preview/mp4/sample-5s.mp4">
-        <img src="https://picsum.photos/id/1015/1200/1600" alt="Poster 2">
-      </button>
-      <button class="card" data-video="https://media.githubusercontent.com/media/mdn/learning-area/main/html/multimedia-and-embedding/video-and-audio-content/rabbit320.mp4">
-        <img src="https://picsum.photos/id/1025/1200/1600" alt="Poster 3">
-      </button>
-      <button class="card" data-video="https://download.samplelib.com/mp4/sample-10s.mp4">
-        <img src="https://picsum.photos/id/1035/1200/1600" alt="Poster 4">
-      </button>
-      <button class="card" data-video="https://download.samplelib.com/mp4/sample-15s.mp4">
-        <img src="https://picsum.photos/id/1045/1200/1600" alt="Poster 5">
-      </button>
-      <button class="card" data-video="https://download.samplelib.com/mp4/sample-20s.mp4">
-        <img src="https://picsum.photos/id/1055/1200/1600" alt="Poster 6">
-      </button>
-      <button class="card" data-video="https://download.samplelib.com/mp4/sample-30s.mp4">
-        <img src="https://picsum.photos/id/1065/1200/1600" alt="Poster 7">
-      </button>
-    </div>
-    <div class="floor" aria-hidden="true"></div>
-  </div>
+body {
+  background:#000;
+  color:#fff;
+  overflow-x:hidden;
+}
 
-  <!-- Lightbox -->
-  <div class="lightbox" id="lightbox" aria-hidden="true">
-    <div class="lightbox-backdrop" id="backdrop"></div>
-    <div class="lightbox-dialog" role="dialog" aria-modal="true" aria-label="Video Viewer">
-      <button class="lightbox-close" id="closeVideo" aria-label="Close">✕</button>
-      <video id="lightboxVideo" playsinline preload="none"></video>
-    </div>
-  </div>
+/* Back button */
+.back-btn {
+  position:fixed;
+  top:14px;
+  left:14px;
+  color:#fff;
+  text-decoration:none;
+  font-size:13px;
+  font-weight:bold;
+  opacity:.9;
+  mix-blend-mode:difference;
+  z-index:100;
+}
+.back-btn:hover { opacity:1; }
 
-  <script src="safe.js?v=1" defer></script>
-</body>
-</html>
+/* Title */
+.title {
+  text-align:center;
+  margin-top:60px;
+  margin-bottom:25px;
+  letter-spacing:4px;
+  font-size:18px;
+}
+
+/* Horizontal Reel */
+.reel {
+  display:flex;
+  gap:18px;
+  padding:0 20px;
+  overflow-x:auto;
+  scroll-behavior:smooth;
+}
+
+.reel::-webkit-scrollbar {
+  display:none;
+}
+
+/* Cards */
+.card {
+  min-width:220px;
+  height:330px;
+  border-radius:12px;
+  overflow:hidden;
+  flex-shrink:0;
+  background:#111;
+  box-shadow:0 4px 20px rgba(0,0,0,.6);
+  transition:transform .22s ease;
+  cursor:pointer;
+}
+
+.card:hover {
+  transform:scale(1.05);
+}
+
+.card img {
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+/* Mobile scaling */
+@media(max-width:600px) {
+  .card {
+    min-width:160px;
+    height:240px;
+  }
+}<script src="projects.js"></script>
