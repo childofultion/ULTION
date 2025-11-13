@@ -1,137 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>TENEBROUS</title>
-
-  <!-- FAVICON -->
-  <link rel="icon" type="image/png" href="images/favicon.png" />
-
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TENEBROUS</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- Desktop & background video -->
-  <div id="desktop" class="desktop">
-    <video id="bg-video" autoplay muted loop poster="images/wallpaper.jpg">
-      <source src="images/wallpaper.mp4" type="video/mp4" />
-    </video>
+  <!-- Desktop & background video -->
+  <div id="desktop" class="desktop">
+    <video id="bg-video" autoplay muted loop poster="images/wallpaper.jpg">
+      <source src="images/wallpaper.mp4" type="video/mp4" />
+    </video>
 
-    <!-- Desktop icons -->
-    <div class="icon" data-window="music" style="left:30px; top:30px;">
-      <img src="images/tenebrous.png" alt="MUSIC" width="48" height="48" />
-      <span>MUSIC</span>
-    </div>
+    <!-- Desktop icons (static, uniform) -->
+    <div class="icon" data-window="music" style="left:30px; top:30px;">
+      <img src="images/tenebrous.png" alt="MUSIC" width="48" height="48" />
+      <span>MUSIC</span>
+    </div>
 
-    <!-- STORE NOW OPENS POPUP -->
-    <div class="icon" data-window="store-window" style="left:30px; top:120px;">
-      <img src="images/store.png" alt="STORE" width="48" height="48" />
-      <span>STORE</span>
-    </div>
+    <div class="icon" data-window="store" style="left:30px; top:120px;">
+      <img src="images/store.png" alt="STORE" width="48" height="48" />
+      <span>STORE</span>
+    </div>
 
-    <div class="icon" data-window="notepad" style="left:30px; top:210px;">
-      <img src="images/notepad.png" alt="NOTEPAD" width="48" height="48" />
-      <span>NOTEPAD</span>
-    </div>
+    <div class="icon" data-window="notepad" style="left:30px; top:210px;">
+      <img src="images/notepad.png" alt="NOTEPAD" width="48" height="48" />
+      <span>NOTEPAD</span>
+    </div>
 
-    <!-- MUSIC window -->
-    <div id="music" class="window">
-      <div class="title-bar"><span>MUSIC</span><button class="close-btn">X</button></div>
-      <div class="window-content"><p>LIVE OFF SILENCE.</p></div>
-    </div>
+    <!-- App windows (hidden by default) -->
+    <div id="music" class="window">
+      <div class="title-bar"><span>MUSIC</span><button class="close-btn">X</button></div>
+      <div class="window-content"><p>LIVE OFF SILENCE.</p></div>
+    </div>
 
-    <!-- NOTEPAD window -->
-    <div id="notepad" class="window">
-      <div class="title-bar"><span>NOTEPAD</span><button class="close-btn">X</button></div>
-      <div class="window-content">
-        <div id="note-toolbar">
-          <button id="note-save">Save</button>
-          <button id="note-clear">Clear</button>
-        </div>
-        <textarea id="note-text" placeholder="Type here..."></textarea>
-      </div>
-    </div>
+    <!-- keep STORE window out; it will redirect instead of opening -->
 
-    <!-- ⭐ NEW: STORE "COMING SOON" POPUP -->
-    <div id="store-window" class="window">
-      <div class="title-bar">
-        <span>STORE</span>
-        <button class="close-btn">X</button>
-      </div>
-      <div class="window-content">
-        <p style="font-size:18px; font-weight:bold;">STORE COMING SOON xox</p>
-      </div>
-    </div>
-  </div>
+    <div id="notepad" class="window">
+      <div class="title-bar"><span>NOTEPAD</span><button class="close-btn">X</button></div>
+      <div class="window-content">
+        <div id="note-toolbar">
+          <button id="note-save">Save</button>
+          <button id="note-clear">Clear</button>
+        </div>
+        <textarea id="note-text" placeholder="Type here..."></textarea>
+      </div>
+    </div>
+  </div>
 
-  <!-- Taskbar -->
-  <div id="taskbar" class="taskbar">
-    <button id="start-btn" class="start-button" aria-label="Start">START</button>
-    <div id="taskbar-tasks" class="taskbar-tasks"></div>
+  <!-- Taskbar (Start | apps | tray | clock) -->
+<div id="taskbar" class="taskbar">
+  <button id="start-btn" class="start-button" aria-label="Start">START</button>
+  <div id="taskbar-tasks" class="taskbar-tasks" aria-live="polite"></div>
 
-    <div id="tray" class="tray">
-      <a href="https://instagram.com/childofultion" target="_blank"><img src="images/instagram.png" /></a>
-      <a href="https://twitter.com/childofultion" target="_blank"><img src="images/twitter.png" /></a>
-      <a href="https://www.tiktok.com/@childofultion" target="_blank"><img src="images/tiktok.png" /></a>
-      <a href="https://facebook.com/tenebrous" target="_blank"><img src="images/facebook.png" /></a>
-    </div>
+  <!-- NEW: system-tray style social icons -->
+  <div id="tray" class="tray" aria-label="Social links">
+    <a href="https://instagram.com/childofultion" target="_blank" rel="noopener" title="Instagram">
+      <img src="images/instagram.png" alt="Instagram" width="16" height="16" />
+    </a>
+    <a href="https://twitter.com/childofultion" target="_blank" rel="noopener" title="Twitter / X">
+      <img src="images/twitter.png" alt="Twitter" width="16" height="16" />
+    </a>
+    <a href="https://www.tiktok.com/@childofultion" target="_blank" rel="noopener" title="TikTok">
+      <img src="images/tiktok.png" alt="TikTok" width="16" height="16" />
+    </a>
+    <a href="https://facebook.com/tenebrous" target="_blank" rel="noopener" title="Facebook">
+      <img src="images/facebook.png" alt="Facebook" width="16" height="16" />
+    </a>
+  </div>
 
-    <div id="clock" class="clock"></div>
-  </div>
+  <div id="clock" class="clock" aria-hidden="false"></div>
+</div>
 
-  <!-- Start Menu -->
-  <div id="start-menu" class="start-menu">
-    <button class="menu-app" data-window="music"><img src="images/tenebrous.png" width="18" />MUSIC</button>
 
-    <!-- ⭐ UPDATE: STORE points to store-window -->
-    <button class="menu-app" data-window="store-window"><img src="images/store.png" width="18" />STORE</button>
+  <!-- Start Menu -->
+  <div id="start-menu" class="start-menu" aria-hidden="true">
+    <button class="menu-app" data-window="music"><img src="images/tenebrous.png" width="18" height="18" alt="" />MUSIC</button>
+    <button class="menu-app" data-window="store"><img src="images/store.png" width="18" height="18" alt="" />STORE</button>
+    <button class="menu-app" data-window="notepad"><img src="images/notepad.png" width="18" height="18" alt="" />NOTEPAD</button>
+    <div class="start-sep"></div>
+    <button id="shutdown" class="shutdown-btn"><img src="images/shutdown.png" width="18" height="18" alt="" />Shut Down</button>
+  </div>
 
-    <button class="menu-app" data-window="notepad"><img src="images/notepad.png" width="18" />NOTEPAD</button>
-    <div class="start-sep"></div>
-    <button id="shutdown" class="shutdown-btn"><img src="images/shutdown.png" width="18" />Shut Down</button>
-  </div>
+  <!-- Shutdown overlay + popup window (hidden until shutdown) -->
+  <div id="shutdown-screen" class="shutdown-screen" aria-hidden="true">
+    <div class="shutdown-dialog" role="dialog" aria-modal="true" aria-label="Shutdown">
+      <div class="title-bar"><span>ULTION</span></div>
+      <div class="popup-body">
+        <p>This system has shut down.</p>
+        <div class="popup-actions">
+          <button id="shutdown-ok" class="ok-btn">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  <!-- Shutdown screen -->
-  <div id="shutdown-screen" class="shutdown-screen">
-    <div class="shutdown-dialog">
-      <div class="title-bar"><span>ULTION</span></div>
-      <div class="popup-body">
-        <p>This system has shut down.</p>
-        <div class="popup-actions">
-          <button id="shutdown-ok" class="ok-btn">OK</button>
-        </div>
-      </div>
-    </div>
-  </div>
+  <!-- Sounds (leave files in sounds/) -->
+  <audio id="bg-music" src="sounds/music.mp3" loop></audio>
+  <audio id="sfx-click" src="sounds/click.mp3"></audio>
+  <audio id="sfx-open" src="sounds/open.mp3"></audio>
+  <audio id="sfx-close" src="sounds/close.mp3"></audio>
+<!-- ===== BOOT SCREEN (shows on initial load only) ===== -->
+<div id="boot-screen" aria-hidden="false">
+  <div class="boot-panel">
+    <div class="boot-logo">
+  <img src="images/ultion-logo.gif" alt="ULTION logo" class="boot-logo-img" />
+</div>
 
-  <!-- Sounds -->
-  <audio id="bg-music" src="sounds/music.mp3" loop></audio>
-  <audio id="sfx-click" src="sounds/click.mp3"></audio>
-  <audio id="sfx-open" src="sounds/open.mp3"></audio>
-  <audio id="sfx-close" src="sounds/close.mp3"></audio>
+    <div class="boot-sub">Starting Up…</div>
+    <div class="boot-progress"><span></span></div>
+  </div>
+</div>
 
-  <!-- Boot screen -->
-  <div id="boot-screen">
-    <div class="boot-panel">
-      <div class="boot-logo"><img src="images/ultion-logo.gif" class="boot-logo-img" /></div>
-      <div class="boot-sub">Starting Up…</div>
-      <div class="boot-progress"><span></span></div>
-    </div>
-  </div>
-
-  <script src="script.js"></script>
-
-  <!-- Remove index.html from URL -->
-  <script>
-  (function(){
-    try {
-      var p = location.pathname;
-      if (/\/index\.html?$/i.test(p)) {
-        var clean = p.replace(/index\.html?$/i, '') || '/';
-        history.replaceState(null, '', clean + location.search + location.hash);
-      }
-    } catch(e){}
-  })();
-  </script>
+  <script src="script.js"></script>
+  <script>
+(function () {
+  try {
+    var p = location.pathname;
+    // handles ".../index.html" (any case) at root or in folders
+    if (/\/index\.html?$/i.test(p)) {
+      var clean = p.replace(/index\.html?$/i, '') || '/';
+      history.replaceState(null, '', clean + location.search + location.hash);
+    }
+  } catch (e) {}
+})();
+</script>
 </body>
 </html>
