@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>STORE — COMING SOON</title>
+<style>
+  :root{ --bg:#000; --fg:#00ff66; --dim:#00b84a; }
+  html,body{height:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--fg);
+    font:16px/1.6 "Courier New", ui-monospace, monospace;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .wrap{ text-align:center; width:min(760px,92vw); }
+
+  .title{
+    display:inline-block; white-space:nowrap; overflow:hidden;
+    border-right:.12em solid var(--fg);
+    letter-spacing:2px; font-size: clamp(22px, 4.2vw, 36px);
+    animation: typing 2.8s steps(22,end) forwards, caret .8s step-end infinite;
+  }
+  @keyframes typing{ from{width:0} to{width:22ch} }
+  @keyframes caret{ 50%{ border-color:transparent } }
+
+  .after{ opacity:0; animation: fadein .8s ease forwards 2.9s }
+  @keyframes fadein{ to{opacity:1} }
+  .crt { animation: crt 3s infinite; }
+  @keyframes crt{ 0%,100%{text-shadow:none} 50%{text-shadow:0 0 .6rem var(--dim)} }
+
+  .menu{ margin-top:1.8rem; letter-spacing:1px }
+  .menu a{
+    color:var(--fg); text-decoration:none; margin:0 18px;
+    transition: opacity .25s ease;
+  }
+  .menu a:hover{ opacity:.55 }
+
+  .notify{ margin-top:1.2rem; font-size:14px; opacity:.9 }
+  .row{
+    display:flex; gap:.75rem; align-items:center; justify-content:center;
+    margin-top:.4rem; flex-wrap:wrap;
+  }
+  .label{opacity:.75}
+  .input{
+    background:transparent; border:none; border-bottom:1px dashed var(--fg);
+    color:var(--fg); outline:none; padding:.25rem .2rem; min-width:220px;
+  }
+  .input::placeholder{ color:#0d9b53 }
+  .btn{
+    background:transparent; border:none; color:var(--fg);
+    text-decoration:underline; cursor:pointer; padding:.25rem .2rem;
+  }
+  .msg{ margin-top:.6rem; min-height:1.2em; opacity:.85 }
+  @media (max-width:420px){ .menu a{ display:inline-block; margin:.25rem .9rem } }
+</style>
+</head>
+<body>
+  <div class="wrap crt">
+    <div class="title">STORE&nbsp;—&nbsp;COMING&nbsp;SOON</div>
+
+    <div class="after">
+      <div class="menu" aria-label="menu">
+        <a href="https://liveoffsilence.com">HOME</a>
+        <a href="#" id="notifyLink">NOTIFY&nbsp;ME</a>
+      </div>
+
+      <div class="notify" id="notifyBlock" hidden>
+        <div class="label">enter email & press return (or tap SEND):</div>
+        <div class="row">
+          <input id="email" class="input" type="email" placeholder="you@example.com" autocomplete="email" />
+          <button class="btn" id="sendBtn" type="button">SEND</button>
+        </div>
+        <div class="msg" id="msg"></div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // ==== SET THIS TO YOUR FORMSPREE ENDPOINT (recommended, no backend needed) ====
+  // After you create a form at https://formspree.io, replace the URL below:
+  const FORMSPREE_ENDPOINT = ""; // e.g. "https://formspree.io/f/abcdwxyz"
+  // ============================================================================
+
+  const notifyLink = document.getElementById('notifyLink');
+  const block = document.getElementById('notifyBlock');
+  const email = document.getElementById('email');
+  const sendBtn = document.getElementById('sendBtn');
+  const msg = document.getElementById('msg');
+
+  notifyLink.addEventListener('click', (e)=>{
+    e.preventDefault();
+    block.hidden = false;
+    email.focus();
+  });
+
+  function valid(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+
+  async function send(){
+    const v = email.value.trim();
+    if(!valid(v)){ msg.textContent = "enter a valid email."; return; }
+
+    // Preferred: Formspree POST (emails you the submission)
+    if(FORMSPREE_ENDPOINT){
+      msg.textContent = "sending…";
+      try{
+        const r = await fetch(FORMSPREE_ENDPOINT, {
+          method: "POST",
+          headers: { "Accept":"application/json", "Content-Type":"application/json" },
+          body: JSON.stringify({ email: v, source: "LOS store splash" })
+        });
+        if(r.ok){
+          msg.textContent = "thanks — you’ll be notified.";
+          email.value = "";
+          return;
+        }else{
+          // fallback if Formspree returns an error
+          throw new Error("Formspree error");
+        }
+      }catch(e){
+        // fall through to mailto
+      }
+    }
+
+    // Fallback: open mail client to email you directly (zero setup)
+    const to = "ultion@liveoffsilence.com";
+    const subject = encodeURIComponent("Notify me: STORE (coming soon)");
+    const body = encodeURIComponent(
+      `please notify me when the store goes live.\n\nemail: ${v}\n— sent from liveoffsilence.com splash`
+    );
+    window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
+    msg.textContent = "opening mail app… if nothing opens, email ultion@liveoffsilence.com";
+  }
+
+  email.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') send(); });
+  sendBtn.addEventListener('click', send);
+</script>
+</body>
+</html>
