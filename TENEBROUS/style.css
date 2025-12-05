@@ -457,4 +457,86 @@ html, body { width: 100%; height: 100%; }
 
   .taskbar { height:40px; }
   .clock { font-size:12px; }
+}/* ===== DISCOVERY / RELEASE LIST ===== */
+.release-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.release-item:hover {
+  background: rgba(0,0,0,0.08);
+}
+.release-cover {
+  width: 52px;
+  height: 52px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+.release-info .release-title {
+  font-size: 14px;
+  font-weight: 700;
+}
+.release-info .release-year {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+/* ===== GHOST PAGE ===== */
+.hidden { display: none; }
+
+.ghost-page {
+  height: 100%;
+  overflow-y: auto;
+}
+
+.ghost-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.nav-btn {
+  padding: 4px 10px;
+  font-size: 12px;
+  background: linear-gradient(#fff, #ddd);
+  border: 1px solid #888;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.nav-btn.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.ghost-inner {
+  display: flex;
+  gap: 16px;
+}
+
+.ghost-big-cover {
+  width: 120px;
+  height: 120px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.ghost-meta h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.ghost-links li {
+  margin: 6px 0;
+}
+
+/* Lyrics box */
+.lyrics-box {
+  border: 1px solid #888;
+  padding: 8px;
+  max-height: 150px;
+  overflow-y: auto;
+  background: #fff;
 }

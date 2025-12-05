@@ -322,3 +322,22 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     if (target) target.classList.add('active');
   });
 });
+/* ===== DISCOVERY → GHOST PAGE SWITCHING ===== */
+const ghostItem = document.getElementById("release-ghost");
+const ghostPage = document.getElementById("ghost-page");
+const musicMain = document.getElementById("music-main-view");
+const ghostBack = document.getElementById("ghost-back");
+
+if (ghostItem) {
+  ghostItem.addEventListener("click", () => {
+    musicMain.classList.add("hidden");
+    ghostPage.classList.remove("hidden");
+  });
+}
+
+if (ghostBack) {
+  ghostBack.addEventListener("click", () => {
+    ghostPage.classList.add("hidden");
+    musicMain.classList.remove("hidden");
+  });
+}
