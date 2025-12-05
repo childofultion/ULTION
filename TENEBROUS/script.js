@@ -15,17 +15,21 @@ const windowsEls   = document.querySelectorAll('.window');
 const taskbarTasks = document.getElementById('taskbar-tasks');
 const clockEl      = document.getElementById('clock');
 
-/* ====== URLs you wanted ====== */
-const MUSIC_URL = "https://google.com";                  // placeholder
-const STORE_URL = "https://store.liveoffsilence.com";    // real store
-const HOME_URL  = "https://liveoffsilence.com";                                   // shutdown -> home page
+/* ====== URLs ====== */
+const STORE_URL = "https://store.liveoffsilence.com"; // store still redirects
+const HOME_URL  = null;                               // shutdown -> home page (null = no redirect)
 
 let zTop = 1000;
 
 /* ========= Clock (right) ========= */
 function tick() {
   const now = new Date();
-  if (clockEl) clockEl.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  if (clockEl) {
+    clockEl.textContent = now.toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
 }
 tick();
 setInterval(tick, 1000);
@@ -38,8 +42,11 @@ if (startBtn && startMenu) {
     const shown = startMenu.style.display === 'flex';
     startMenu.style.display = shown ? 'none' : 'flex';
   });
+
   document.addEventListener('click', (e) => {
-    if (!startMenu.contains(e.target) && e.target !== startBtn) startMenu.style.display = 'none';
+    if (!startMenu.contains(e.target) && e.target !== startBtn) {
+      startMenu.style.display = 'none';
+    }
   });
 }
 
@@ -55,10 +62,10 @@ function addTask(appId, iconSrc, label) {
     if (!win) return;
     const visible = win.classList.contains('active');
     if (visible) {
-      win.classList.remove('active');      // minimize
+      win.classList.remove('active'); // minimize
       btn.classList.remove('open');
     } else {
-      openWindow(win);                      // restore
+      openWindow(win);                // restore
       btn.classList.add('open');
     }
   });
@@ -98,11 +105,7 @@ document.querySelectorAll('.close-btn').forEach(btn => {
 function handleLaunch(id) {
   try { sfxClick.play(); } catch (_) {}
 
-  // Your requested redirects
-  if (id === 'music' && MUSIC_URL) {
-    window.location.href = MUSIC_URL;
-    return;
-  }
+  // STORE still redirects out
   if (id === 'store' && STORE_URL) {
     window.location.href = STORE_URL;
     return;
@@ -114,7 +117,9 @@ function handleLaunch(id) {
   if (startMenu) startMenu.style.display = 'none';
 }
 
-icons.forEach(ic => ic.addEventListener('click', () => handleLaunch(ic.dataset.window)));
+icons.forEach(ic =>
+  ic.addEventListener('click', () => handleLaunch(ic.dataset.window))
+);
 document.querySelectorAll('.menu-app').forEach(btn =>
   btn.addEventListener('click', () => handleLaunch(btn.dataset.window))
 );
@@ -168,7 +173,9 @@ if (shutdownBtn) {
     taskbar.style.opacity  = '0';
     if (startMenu) startMenu.style.opacity = '0';
 
-    requestAnimationFrame(() => { shutdownScreen.classList.add('show'); });
+    requestAnimationFrame(() => {
+      shutdownScreen.classList.add('show');
+    });
 
     setTimeout(() => {
       desktop.style.display = 'none';
@@ -230,18 +237,25 @@ function primeBgMusicForAutoplay() {
     a.volume = 0;
     a.muted = true;
     a.play().catch(() => {
-      const resume = () => { a.play().catch(()=>{}); document.removeEventListener('click', resume); };
+      const resume = () => {
+        a.play().catch(()=>{});
+        document.removeEventListener('click', resume);
+      };
       document.addEventListener('click', resume);
     });
   } catch (_) {}
 }
 function unmuteAndFadeBgMusic(targetVol = 0.25, fadeMs = 1200) {
-  const a = bgMusic; if (!a) return;
-  const steps = 30, dt = fadeMs / steps;
+  const a = bgMusic;
+  if (!a) return;
+  const steps = 30;
+  const dt = fadeMs / steps;
   a.muted = false;
-  let i = 0; const from = typeof a.volume === 'number' ? a.volume : 0;
+  let i = 0;
+  const from = typeof a.volume === 'number' ? a.volume : 0;
   const t = setInterval(() => {
-    i++; a.volume = from + (targetVol - from) * (i/steps);
+    i++;
+    a.volume = from + (targetVol - from) * (i / steps);
     if (i >= steps) clearInterval(t);
   }, dt);
 }
@@ -260,7 +274,8 @@ function unmuteAndFadeBgMusic(targetVol = 0.25, fadeMs = 1200) {
 
   let finished = false;
   function endBoot() {
-    if (finished) return; finished = true;
+    if (finished) return;
+    finished = true;
     const elapsed = performance.now() - start;
     const delay = Math.max(0, MIN_SHOW - elapsed);
     setTimeout(() => {
@@ -284,9 +299,26 @@ function unmuteAndFadeBgMusic(targetVol = 0.25, fadeMs = 1200) {
       };
       bgVideo.addEventListener('canplay', onReady, { once:true });
       bgVideo.addEventListener('canplaythrough', onReady, { once:true });
-      var fallback = setTimeout(() => { endBoot(); cleanup(); }, MAX_WAIT);
+      var fallback = setTimeout(() => {
+        endBoot();
+        cleanup();
+      }, MAX_WAIT);
     }
   } else {
     setTimeout(endBoot, MIN_SHOW);
   }
 })();
+
+/* ========= MUSIC TAB SWITCHING ========= */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const tabName = btn.dataset.tab;
+    document.querySelectorAll('.tab-section').forEach(sec => sec.classList.remove('active'));
+
+    const target = document.getElementById('tab-' + tabName);
+    if (target) target.classList.add('active');
+  });
+});

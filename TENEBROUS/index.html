@@ -30,15 +30,48 @@
     </div>
 
     <!-- App windows (hidden by default) -->
+
+    <!-- MUSIC WINDOW with tabs -->
     <div id="music" class="window">
-      <div class="title-bar"><span>MUSIC</span><button class="close-btn">X</button></div>
-      <div class="window-content"><p>LIVE OFF SILENCE.</p></div>
+      <div class="title-bar">
+        <span>MUSIC</span>
+        <button class="close-btn">X</button>
+      </div>
+      <div class="window-content">
+        <!-- Tabs -->
+        <div id="music-tabs" class="music-tabs">
+          <button data-tab="discography" class="tab-btn active">DISCOGRAPHY</button>
+          <button data-tab="lyrics" class="tab-btn">LYRICS</button>
+          <button data-tab="links" class="tab-btn">LINKS</button>
+        </div>
+
+        <!-- Tab content -->
+        <div id="music-tab-content">
+          <!-- DISCOVERY / DISCOGRAPHY -->
+          <div id="tab-discography" class="tab-section active">
+            <p>Your releases will appear here.</p>
+          </div>
+
+          <!-- LYRICS -->
+          <div id="tab-lyrics" class="tab-section">
+            <p>Lyrics section.</p>
+          </div>
+
+          <!-- LINKS -->
+          <div id="tab-links" class="tab-section">
+            <p>Links to streaming pages.</p>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- keep STORE window out; it will redirect instead of opening -->
 
     <div id="notepad" class="window">
-      <div class="title-bar"><span>NOTEPAD</span><button class="close-btn">X</button></div>
+      <div class="title-bar">
+        <span>NOTEPAD</span>
+        <button class="close-btn">X</button>
+      </div>
       <div class="window-content">
         <div id="note-toolbar">
           <button id="note-save">Save</button>
@@ -50,37 +83,44 @@
   </div>
 
   <!-- Taskbar (Start | apps | tray | clock) -->
-<div id="taskbar" class="taskbar">
-  <button id="start-btn" class="start-button" aria-label="Start">START</button>
-  <div id="taskbar-tasks" class="taskbar-tasks" aria-live="polite"></div>
+  <div id="taskbar" class="taskbar">
+    <button id="start-btn" class="start-button" aria-label="Start">START</button>
+    <div id="taskbar-tasks" class="taskbar-tasks" aria-live="polite"></div>
 
-  <!-- NEW: system-tray style social icons -->
-  <div id="tray" class="tray" aria-label="Social links">
-    <a href="https://instagram.com/childofultion" target="_blank" rel="noopener" title="Instagram">
-      <img src="images/instagram.png" alt="Instagram" width="16" height="16" />
-    </a>
-    <a href="https://twitter.com/childofultion" target="_blank" rel="noopener" title="Twitter / X">
-      <img src="images/twitter.png" alt="Twitter" width="16" height="16" />
-    </a>
-    <a href="https://www.tiktok.com/@childofultion" target="_blank" rel="noopener" title="TikTok">
-      <img src="images/tiktok.png" alt="TikTok" width="16" height="16" />
-    </a>
-    <a href="https://facebook.com/tenebrous" target="_blank" rel="noopener" title="Facebook">
-      <img src="images/facebook.png" alt="Facebook" width="16" height="16" />
-    </a>
+    <!-- system-tray style social icons -->
+    <div id="tray" class="tray" aria-label="Social links">
+      <a href="https://instagram.com/childofultion" target="_blank" rel="noopener" title="Instagram">
+        <img src="images/instagram.png" alt="Instagram" width="16" height="16" />
+      </a>
+      <a href="https://twitter.com/childofultion" target="_blank" rel="noopener" title="Twitter / X">
+        <img src="images/twitter.png" alt="Twitter" width="16" height="16" />
+      </a>
+      <a href="https://www.tiktok.com/@childofultion" target="_blank" rel="noopener" title="TikTok">
+        <img src="images/tiktok.png" alt="TikTok" width="16" height="16" />
+      </a>
+      <a href="https://facebook.com/tenebrous" target="_blank" rel="noopener" title="Facebook">
+        <img src="images/facebook.png" alt="Facebook" width="16" height="16" />
+      </a>
+    </div>
+
+    <div id="clock" class="clock" aria-hidden="false"></div>
   </div>
-
-  <div id="clock" class="clock" aria-hidden="false"></div>
-</div>
-
 
   <!-- Start Menu -->
   <div id="start-menu" class="start-menu" aria-hidden="true">
-    <button class="menu-app" data-window="music"><img src="images/tenebrous.png" width="18" height="18" alt="" />MUSIC</button>
-    <button class="menu-app" data-window="store"><img src="images/store.png" width="18" height="18" alt="" />STORE</button>
-    <button class="menu-app" data-window="notepad"><img src="images/notepad.png" width="18" height="18" alt="" />NOTEPAD</button>
+    <button class="menu-app" data-window="music">
+      <img src="images/tenebrous.png" width="18" height="18" alt="" />MUSIC
+    </button>
+    <button class="menu-app" data-window="store">
+      <img src="images/store.png" width="18" height="18" alt="" />STORE
+    </button>
+    <button class="menu-app" data-window="notepad">
+      <img src="images/notepad.png" width="18" height="18" alt="" />NOTEPAD
+    </button>
     <div class="start-sep"></div>
-    <button id="shutdown" class="shutdown-btn"><img src="images/shutdown.png" width="18" height="18" alt="" />Shut Down</button>
+    <button id="shutdown" class="shutdown-btn">
+      <img src="images/shutdown.png" width="18" height="18" alt="" />Shut Down
+    </button>
   </div>
 
   <!-- Shutdown overlay + popup window (hidden until shutdown) -->
@@ -101,30 +141,29 @@
   <audio id="sfx-click" src="sounds/click.mp3"></audio>
   <audio id="sfx-open" src="sounds/open.mp3"></audio>
   <audio id="sfx-close" src="sounds/close.mp3"></audio>
-<!-- ===== BOOT SCREEN (shows on initial load only) ===== -->
-<div id="boot-screen" aria-hidden="false">
-  <div class="boot-panel">
-    <div class="boot-logo">
-  <img src="images/ultion-logo.gif" alt="ULTION logo" class="boot-logo-img" />
-</div>
 
-    <div class="boot-sub">Starting Up…</div>
-    <div class="boot-progress"><span></span></div>
+  <!-- BOOT SCREEN (shows on initial load only) -->
+  <div id="boot-screen" aria-hidden="false">
+    <div class="boot-panel">
+      <div class="boot-logo">
+        <img src="images/ultion-logo.gif" alt="ULTION logo" class="boot-logo-img" />
+      </div>
+      <div class="boot-sub">Starting Up…</div>
+      <div class="boot-progress"><span></span></div>
+    </div>
   </div>
-</div>
 
   <script src="script.js"></script>
   <script>
-(function () {
-  try {
-    var p = location.pathname;
-    // handles ".../index.html" (any case) at root or in folders
-    if (/\/index\.html?$/i.test(p)) {
-      var clean = p.replace(/index\.html?$/i, '') || '/';
-      history.replaceState(null, '', clean + location.search + location.hash);
-    }
-  } catch (e) {}
-})();
-</script>
+  (function () {
+    try {
+      var p = location.pathname;
+      if (/\/index\.html?$/i.test(p)) {
+        var clean = p.replace(/index\.html?$/i, '') || '/';
+        history.replaceState(null, '', clean + location.search + location.hash);
+      }
+    } catch (e) {}
+  })();
+  </script>
 </body>
 </html>
