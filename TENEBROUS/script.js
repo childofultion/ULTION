@@ -16,7 +16,7 @@ const taskbarTasks = document.getElementById('taskbar-tasks');
 const clockEl      = document.getElementById('clock');
 
 /* ====== URLs ====== */
-const STORE_URL = "https://store.liveoffsilence.com"; // store redirect
+const STORE_URL = "https://liveoffsilence.com/COMING-SOON/"; // store redirect
 const HOME_URL  = "https://liveoffsilence.com";                               // shutdown -> home (null = none)
 
 let zTop = 1000;
