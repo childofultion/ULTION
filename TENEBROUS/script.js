@@ -17,7 +17,7 @@ const clockEl      = document.getElementById('clock');
 
 /* ====== URLs ====== */
 const STORE_URL = "https://store.liveoffsilence.com"; // store redirect
-const HOME_URL  = null;                               // shutdown -> home (null = none)
+const HOME_URL  = "https://liveoffsilence.com";                               // shutdown -> home (null = none)
 
 let zTop = 1000;
 
