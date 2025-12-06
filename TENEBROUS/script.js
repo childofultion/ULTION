@@ -209,7 +209,7 @@ document.addEventListener('click', (e) => {
 /* ========= Shutdown OK -> redirect ========= */
 if (shutdownOK) {
   shutdownOK.addEventListener('click', () => {
-    if (HOME_URL) window.location.href = HOME_URL;
+    window.location.href = "https://liveoffsilence.com";
   });
 }
 
