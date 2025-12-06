@@ -29,93 +29,95 @@
       <span>NOTEPAD</span>
     </div>
 
-    <!-- App windows (hidden by default) -->
+    <!-- ================== WINDOWS ================== -->
 
     <!-- MUSIC WINDOW -->
-<div id="music" class="window">
-  <div class="title-bar">
-    <span>MUSIC</span>
-    <button class="close-btn">X</button>
-  </div>
-
-  <div class="window-content">
-
-    <!-- ===== MAIN MUSIC VIEW (tabs) ===== -->
-    <div id="music-main-view">
-
-      <div id="music-tabs" class="music-tabs">
-        <button data-tab="discography" class="tab-btn active">DISCOGRAPHY</button>
-        <button data-tab="lyrics" class="tab-btn">LYRICS</button>
-        <button data-tab="links" class="tab-btn">LINKS</button>
+    <div id="music" class="window">
+      <div class="title-bar">
+        <span>MUSIC</span>
+        <button class="close-btn">X</button>
       </div>
 
-      <div id="music-tab-content">
+      <div class="window-content">
 
-        <!-- === DISCOGRAPHY TAB === -->
-        <div id="tab-discography" class="tab-section active">
-          <div class="release-item" id="release-ghost">
-            <img src="images/ghost.jpg" alt="Ghost cover" class="release-cover" />
-            <div class="release-info">
-              <div class="release-title">Ghost (feat. surrenderdorothy)</div>
-              <div class="release-year">2023</div>
+        <!-- ===== MAIN MUSIC VIEW (TABS) ===== -->
+        <div id="music-main-view">
+
+          <div id="music-tabs" class="music-tabs">
+            <button data-tab="discography" class="tab-btn active">DISCOGRAPHY</button>
+            <button data-tab="links" class="tab-btn">LINKS</button>
+          </div>
+
+          <div id="music-tab-content">
+            <!-- DISCOGRAPHY TAB -->
+            <div id="tab-discography" class="tab-section active">
+              <div class="release-item" id="release-ghost">
+                <img src="images/ghost.jpg" alt="Ghost cover" class="release-cover" />
+                <div class="release-info">
+                  <div class="release-title">Ghost (feat. surrenderdorothy)</div>
+                  <div class="release-year">2023</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- LINKS TAB (ARTIST PAGES) -->
+            <div id="tab-links" class="tab-section">
+              <h3>Artist Pages</h3>
+              <ul class="link-list">
+                <li><a href="#" target="_blank">Spotify</a></li>
+                <li><a href="#" target="_blank">Apple Music</a></li>
+                <li><a href="#" target="_blank">SoundCloud</a></li>
+                <li><a href="#" target="_blank">YouTube</a></li>
+                <li><a href="#" target="_blank">Amazon Music</a></li>
+              </ul>
             </div>
           </div>
         </div>
 
-        <!-- === LYRICS TAB === -->
-        <div id="tab-lyrics" class="tab-section">
-          <h3>Ghost — Lyrics</h3>
-          <div class="lyrics-box">
-            <p>[ Add your lyrics here ]</p>
+        <!-- ===== GHOST DETAIL PAGE (XP FRAME) ===== -->
+        <div id="ghost-page" class="ghost-page hidden">
+          <div class="xp-frame">
+
+            <div class="xp-frame-header">
+              <button id="ghost-back" class="xp-nav">◀ Back</button>
+              <button class="xp-nav disabled">Forward ►</button>
+            </div>
+
+            <div class="xp-frame-body">
+
+              <div class="xp-artwork-box">
+                <img src="images/ghost.jpg" class="xp-artwork" alt="Ghost cover" />
+              </div>
+
+              <div class="xp-meta">
+                <h2 class="xp-title">Ghost (feat. surrenderdorothy)</h2>
+                <p class="xp-year">2023</p>
+
+                <hr class="xp-divider" />
+
+                <h3 class="xp-subhead">Listen</h3>
+                <ul class="xp-links">
+                  <li><a href="#" target="_blank">Spotify</a></li>
+                  <li><a href="#" target="_blank">Apple Music</a></li>
+                  <li><a href="#" target="_blank">YouTube</a></li>
+                  <li><a href="#" target="_blank">SoundCloud</a></li>
+                  <li><a href="#" target="_blank">Amazon Music</a></li>
+                </ul>
+
+                <h3 class="xp-subhead">Lyrics</h3>
+                <div class="xp-lyrics-box">
+                  <p>[ Add lyrics here ]</p>
+                </div>
+              </div>
+
+            </div>
           </div>
         </div>
 
-        <!-- === LINKS TAB === -->
-        <div id="tab-links" class="tab-section">
-          <h3>Artist Pages</h3>
-          <ul class="link-list">
-            <li><a href="#" target="_blank">Spotify</a></li>
-            <li><a href="#" target="_blank">Apple Music</a></li>
-            <li><a href="#" target="_blank">SoundCloud</a></li>
-            <li><a href="#" target="_blank">Bandcamp</a></li>
-            <li><a href="#" target="_blank">YouTube</a></li>
-          </ul>
-        </div>
-
       </div>
     </div>
 
-    <!-- ===== GHOST DETAIL PAGE ===== -->
-    <div id="ghost-page" class="ghost-page hidden">
-      <div class="ghost-header">
-        <button id="ghost-back" class="nav-btn">◀ Back</button>
-        <button class="nav-btn disabled">Forward ▶</button>
-      </div>
-
-      <div class="ghost-inner">
-        <img src="images/ghost.jpg" alt="Ghost cover" class="ghost-big-cover" />
-
-        <div class="ghost-meta">
-          <h2>Ghost (feat. surrenderdorothy)</h2>
-          <p class="ghost-year">2023</p>
-
-          <h3>Listen</h3>
-          <ul class="ghost-links">
-            <li><a href="#" target="_blank">Spotify</a></li>
-            <li><a href="#" target="_blank">Apple Music</a></li>
-            <li><a href="#" target="_blank">YouTube</a></li>
-            <li><a href="#" target="_blank">SoundCloud</a></li>
-            <li><a href="#" target="_blank">Bandcamp</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-    <!-- keep STORE window out; it will redirect instead of opening -->
-
+    <!-- NOTEPAD WINDOW -->
     <div id="notepad" class="window">
       <div class="title-bar">
         <span>NOTEPAD</span>
@@ -185,13 +187,13 @@
     </div>
   </div>
 
-  <!-- Sounds (leave files in sounds/) -->
+  <!-- Sounds -->
   <audio id="bg-music" src="sounds/music.mp3" loop></audio>
   <audio id="sfx-click" src="sounds/click.mp3"></audio>
   <audio id="sfx-open" src="sounds/open.mp3"></audio>
   <audio id="sfx-close" src="sounds/close.mp3"></audio>
 
-  <!-- BOOT SCREEN (shows on initial load only) -->
+  <!-- BOOT SCREEN (initial load only) -->
   <div id="boot-screen" aria-hidden="false">
     <div class="boot-panel">
       <div class="boot-logo">
@@ -204,15 +206,15 @@
 
   <script src="script.js"></script>
   <script>
-  (function () {
-    try {
-      var p = location.pathname;
-      if (/\/index\.html?$/i.test(p)) {
-        var clean = p.replace(/index\.html?$/i, '') || '/';
-        history.replaceState(null, '', clean + location.search + location.hash);
-      }
-    } catch (e) {}
-  })();
+    (function () {
+      try {
+        var p = location.pathname;
+        if (/\/index\.html?$/i.test(p)) {
+          var clean = p.replace(/index\.html?$/i, '') || '/';
+          history.replaceState(null, '', clean + location.search + location.hash);
+        }
+      } catch (e) {}
+    })();
   </script>
 </body>
 </html>

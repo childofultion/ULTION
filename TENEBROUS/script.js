@@ -16,12 +16,12 @@ const taskbarTasks = document.getElementById('taskbar-tasks');
 const clockEl      = document.getElementById('clock');
 
 /* ====== URLs ====== */
-const STORE_URL = "https://store.liveoffsilence.com"; // store still redirects
-const HOME_URL  = null;                               // shutdown -> home page (null = no redirect)
+const STORE_URL = "https://store.liveoffsilence.com"; // store redirect
+const HOME_URL  = null;                               // shutdown -> home (null = none)
 
 let zTop = 1000;
 
-/* ========= Clock (right) ========= */
+/* ========= Clock ========= */
 function tick() {
   const now = new Date();
   if (clockEl) {
@@ -105,13 +105,13 @@ document.querySelectorAll('.close-btn').forEach(btn => {
 function handleLaunch(id) {
   try { sfxClick.play(); } catch (_) {}
 
-  // STORE still redirects out
+  // STORE redirects
   if (id === 'store' && STORE_URL) {
     window.location.href = STORE_URL;
     return;
   }
 
-  // Otherwise open a window if it exists
+  // Otherwise open window
   const win = document.getElementById(id);
   if (win) openWindow(win);
   if (startMenu) startMenu.style.display = 'none';
@@ -156,7 +156,7 @@ windowsEls.forEach(win => {
   });
 });
 
-/* ========= Shutdown: fade to black then show dialog ========= */
+/* ========= Shutdown ========= */
 if (shutdownBtn) {
   shutdownBtn.addEventListener('click', () => {
     try { sfxClick.play(); } catch (_) {}
@@ -185,7 +185,7 @@ if (shutdownBtn) {
   });
 }
 
-/* ========= Notepad: Save / Clear ========= */
+/* ========= Notepad ========= */
 document.addEventListener('click', (e) => {
   if (e.target && e.target.id === 'note-save') {
     const noteArea = document.getElementById('note-text');
@@ -206,7 +206,7 @@ document.addEventListener('click', (e) => {
   }
 });
 
-/* ========= Shutdown OK -> redirect to home ========= */
+/* ========= Shutdown OK -> redirect ========= */
 if (shutdownOK) {
   shutdownOK.addEventListener('click', () => {
     if (HOME_URL) window.location.href = HOME_URL;
@@ -312,30 +312,33 @@ function unmuteAndFadeBgMusic(targetVol = 0.25, fadeMs = 1200) {
 /* ========= MUSIC TAB SWITCHING ========= */
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
+    const tabName = btn.dataset.tab;
+
+    // switch tab button state
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
 
-    const tabName = btn.dataset.tab;
+    // switch tab content
     document.querySelectorAll('.tab-section').forEach(sec => sec.classList.remove('active'));
-
     const target = document.getElementById('tab-' + tabName);
     if (target) target.classList.add('active');
   });
 });
+
 /* ===== DISCOVERY → GHOST PAGE SWITCHING ===== */
 const ghostItem = document.getElementById("release-ghost");
 const ghostPage = document.getElementById("ghost-page");
 const musicMain = document.getElementById("music-main-view");
 const ghostBack = document.getElementById("ghost-back");
 
-if (ghostItem) {
+if (ghostItem && ghostPage && musicMain) {
   ghostItem.addEventListener("click", () => {
     musicMain.classList.add("hidden");
     ghostPage.classList.remove("hidden");
   });
 }
 
-if (ghostBack) {
+if (ghostBack && ghostPage && musicMain) {
   ghostBack.addEventListener("click", () => {
     ghostPage.classList.add("hidden");
     musicMain.classList.remove("hidden");

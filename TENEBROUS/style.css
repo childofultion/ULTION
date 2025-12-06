@@ -25,7 +25,7 @@ html, body { width: 100%; height: 100%; }
   z-index: 1;
 }
 
-/* ===== ICONS (uniform, static) ===== */
+/* ===== ICONS ===== */
 .icon {
   position: absolute;
   width: 80px;
@@ -45,14 +45,18 @@ html, body { width: 100%; height: 100%; }
 }
 .icon span { font-size: 12px; display: block; }
 
+/* Slightly shrink ONLY the Notepad desktop icon */
+.icon[data-window="notepad"] img { width:42px; height:42px; }
+.icon[data-window="notepad"] { width:76px; }
+
 /* ===== WINDOWS ===== */
 .window {
   display: none;
   position: absolute;
   top: 90px;
   left: 120px;
-  width: 420px;
-  height: 300px;
+  width: 500px;              /* wider for clean XP layout */
+  height: 320px;
   background: linear-gradient(180deg,#ece9d8,#dcd9c0);
   border: 2px solid #404040;
   border-top-color:#808080;
@@ -90,7 +94,7 @@ html, body { width: 100%; height: 100%; }
   height: calc(100% - 28px);
 }
 
-/* ===== NOTEPAD STYLES ===== */
+/* ===== NOTEPAD ===== */
 #notepad .window-content {
   padding:0;
   display:flex;
@@ -172,7 +176,6 @@ html, body { width: 100%; height: 100%; }
 }
 .task img { width:16px; height:16px; }
 
-/* clock on the right */
 .clock {
   margin-left:auto;
   color:#fff;
@@ -180,7 +183,7 @@ html, body { width: 100%; height: 100%; }
   font-size:13px;
 }
 
-/* ===== START MENU (polished XP) ===== */
+/* ===== START MENU ===== */
 .start-menu {
   position: fixed;
   left:10px;
@@ -217,7 +220,6 @@ html, body { width: 100%; height: 100%; }
   margin:8px 0;
 }
 
-/* shutdown button style */
 .shutdown-btn {
   background:#e81123;
   color:#fff;
@@ -225,7 +227,7 @@ html, body { width: 100%; height: 100%; }
   padding:8px 10px;
 }
 
-/* ===== SHUTDOWN OVERLAY (black + popup window) ===== */
+/* ===== SHUTDOWN OVERLAY ===== */
 .shutdown-screen {
   position: fixed;
   inset:0;
@@ -284,13 +286,7 @@ html, body { width: 100%; height: 100%; }
 }
 .ok-btn:hover { filter:brightness(1.05); }
 
-/* ===== ANIMATIONS ===== */
-@keyframes fadeIn {
-  from { opacity:0; transform: translateY(10px); }
-  to   { opacity:1; transform:none; }
-}
-
-/* System tray (next to clock) */
+/* ===== SYSTEM TRAY ===== */
 .tray {
   display:flex;
   align-items:center;
@@ -321,10 +317,6 @@ html, body { width: 100%; height: 100%; }
 .tray a:hover img {
   filter: brightness(1.2) saturate(1.2);
 }
-
-/* Slightly shrink ONLY the Notepad desktop icon */
-.icon[data-window="notepad"] img { width:42px; height:42px; }
-.icon[data-window="notepad"] { width:76px; }
 
 /* ===== BOOT SCREEN ===== */
 #boot-screen {
@@ -395,18 +387,16 @@ html, body { width: 100%; height: 100%; }
 .spin { animation: bootSpin 4s linear infinite; }
 @keyframes bootSpin { to { transform: rotate(360deg); } }
 
-/* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .spin { animation: none !important; }
 }
 
-/* ===== MUSIC WINDOW TABS ===== */
+/* ===== MUSIC WINDOW: TABS + LIST ===== */
 #music .window-content {
   display: flex;
   flex-direction: column;
 }
 
-/* Tab buttons row */
 .music-tabs {
   display:flex;
   gap:6px;
@@ -422,42 +412,15 @@ html, body { width: 100%; height: 100%; }
   border-radius:3px;
   font-weight:700;
 }
-
 .music-tabs .tab-btn.active {
   background:linear-gradient(#0a64ad,#004e9a);
   color:#fff;
   border:1px solid #003366;
 }
 
-/* Tab sections */
 .tab-section { display:none; }
 .tab-section.active { display:block; }
 
-/* ===== Mobile wallpaper optimization ===== */
-@media (max-width: 768px) {
-  #bg-video { display:none; }
-
-  .desktop {
-    background-image: url("images/wallpaper-mobile.jpg");
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
-  }
-
-  .icon { width:72px; }
-  .icon img { width:44px; height:44px; }
-  .icon span { font-size:11px; }
-
-  .window {
-    width: calc(100vw - 24px);
-    height: 70vh;
-    left: 12px;
-    top: 70px;
-  }
-
-  .taskbar { height:40px; }
-  .clock { font-size:12px; }
-}/* ===== DISCOVERY / RELEASE LIST ===== */
 .release-item {
   display: flex;
   align-items: center;
@@ -484,6 +447,15 @@ html, body { width: 100%; height: 100%; }
   opacity: 0.7;
 }
 
+/* Artist links tab */
+.link-list {
+  margin-top: 6px;
+  margin-left: 18px;
+}
+.link-list li {
+  margin: 4px 0;
+}
+
 /* ===== GHOST PAGE ===== */
 .hidden { display: none; }
 
@@ -492,51 +464,120 @@ html, body { width: 100%; height: 100%; }
   overflow-y: auto;
 }
 
-.ghost-header {
+/* XP-style frame */
+.xp-frame {
+  border: 2px solid #7a7a7a;
+  border-radius: 4px;
+  background: #f2eee3;
+  padding: 10px;
+  box-shadow: inset 0 0 0 1px #ffffff;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.xp-frame-header {
   display: flex;
   justify-content: space-between;
   margin-bottom: 10px;
 }
 
-.nav-btn {
-  padding: 4px 10px;
-  font-size: 12px;
+.xp-nav {
   background: linear-gradient(#fff, #ddd);
-  border: 1px solid #888;
-  border-radius: 3px;
+  border: 1px solid #777;
+  padding: 4px 10px;
   cursor: pointer;
+  font-size: 12px;
+  border-radius: 3px;
 }
-.nav-btn.disabled {
+.xp-nav.disabled {
   opacity: 0.4;
   pointer-events: none;
 }
 
-.ghost-inner {
+.xp-frame-body {
   display: flex;
   gap: 16px;
 }
 
-.ghost-big-cover {
-  width: 120px;
-  height: 120px;
-  border-radius: 6px;
+/* Artwork */
+.xp-artwork-box {
+  width: 128px;
+  height: 128px;
+  background: #ddd;
+  border: 1px solid #888;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.xp-artwork {
+  width: 128px;
+  height: 128px;
   object-fit: cover;
 }
 
-.ghost-meta h2 {
+/* Meta info */
+.xp-meta {
+  flex: 1;
+}
+.xp-title {
   margin: 0;
   font-size: 18px;
+  font-weight: 700;
+}
+.xp-year {
+  font-size: 14px;
+  margin: 4px 0 6px;
+  color: #444;
+}
+.xp-divider {
+  border: none;
+  border-top: 1px solid #999;
+  margin: 8px 0;
+}
+.xp-subhead {
+  margin: 10px 0 4px;
+  font-size: 14px;
+  font-weight: 700;
+}
+.xp-links {
+  margin-left: 18px;
+}
+.xp-links li {
+  margin: 4px 0;
 }
 
-.ghost-links li {
-  margin: 6px 0;
-}
-
-/* Lyrics box */
-.lyrics-box {
+/* Lyrics scroll box */
+.xp-lyrics-box {
   border: 1px solid #888;
-  padding: 8px;
-  max-height: 150px;
-  overflow-y: auto;
   background: #fff;
+  padding: 6px;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+/* ===== MOBILE WALLPAPER OPTIMISATION ===== */
+@media (max-width: 768px) {
+  #bg-video { display:none; }
+
+  .desktop {
+    background-image: url("images/wallpaper-mobile.jpg");
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+  }
+
+  .icon { width:72px; }
+  .icon img { width:44px; height:44px; }
+  .icon span { font-size:11px; }
+
+  .window {
+    width: calc(100vw - 24px);
+    height: 70vh;
+    left: 12px;
+    top: 70px;
+  }
+
+  .taskbar { height:40px; }
+  .clock { font-size:12px; }
 }
