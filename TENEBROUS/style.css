@@ -660,3 +660,55 @@ html, body { width: 100%; height: 100%; }
         padding: 4px 6px !important;
     }
 }
+@media (max-width: 600px) {
+
+    /* Collapse the left image column completely */
+    .music-left, .album-column, .cover-column {
+        width: 100% !important;
+        max-width: 100% !important;
+        display: flex !important;
+        justify-content: center !important;
+        margin-bottom: 10px !important;
+    }
+
+    /* Make the cover itself shrink and center */
+    .music-cover, .cover-img, img {
+        width: 120px !important;
+        height: auto !important;
+    }
+
+    /* Stack song title + links below the image */
+    .music-header, .song-info {
+        width: 100% !important;
+        text-align: center !important;
+    }
+}
+@media (max-width: 600px) {
+
+    /* Fix lyrics box overflow + force proper mobile width */
+    .lyrics-box,
+    .lyrics,
+    .lyrics-container,
+    textarea {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        overflow-x: hidden !important;
+        padding: 10px !important;
+        box-sizing: border-box !important;
+        display: block !important;
+    }
+
+    /* If your lyrics box has a fixed height on desktop, allow auto on mobile */
+    .lyrics-box,
+    .lyrics-container {
+        height: auto !important;
+        max-height: none !important;
+    }
+
+    /* Make sure vertical scroll still works if needed */
+    .lyrics-box textarea {
+        white-space: normal !important;
+        overflow-y: auto !important;
+    }
+}
