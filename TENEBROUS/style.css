@@ -45,9 +45,9 @@ html, body { width: 100%; height: 100%; }
 }
 .icon span { font-size: 12px; display: block; }
 
-/* Slightly shrink ONLY the Notepad desktop icon */
-.icon[data-window="notepad"] img { width:42px; height:42px; }
-.icon[data-window="notepad"] { width:76px; }
+/* Slightly shrink ONLY the Journal desktop icon (was Notepad) */
+.icon[data-window="journal"] img { width:42px; height:42px; }
+.icon[data-window="journal"] { width:76px; }
 
 /* ===== WINDOWS ===== */
 .window {
@@ -94,37 +94,59 @@ html, body { width: 100%; height: 100%; }
   height: calc(100% - 28px);
 }
 
-/* ===== NOTEPAD ===== */
-#notepad .window-content {
-  padding:0;
+/* ===== JOURNAL (replaces Notepad) ===== */
+#journal .journal-content {
   display:flex;
-  flex-direction:column;
-}
-#note-toolbar {
-  background:#e5e5e5;
-  border-bottom:1px solid #b9b9b9;
-  padding:6px;
-  display:flex;
-  gap:6px;
-}
-#note-toolbar button {
+  gap:10px;
+  height:100%;
   font-size:12px;
-  padding:4px 10px;
-  cursor:pointer;
-  border:1px solid #888;
-  background:linear-gradient(#fff,#ddd);
 }
-#note-toolbar button:hover { filter:brightness(1.05); }
-#note-text {
-  flex:1;
-  width:100%;
-  border:0;
-  outline:0;
-  padding:10px;
-  font:13px/1.4 "Courier New", monospace;
-  background:#fff;
+
+.journal-sidebar {
+  width:160px;
+  border-right:1px solid #b9b9b9;
+  padding-right:8px;
+}
+
+.journal-heading {
+  font-size:13px;
+  margin-bottom:6px;
+  font-weight:700;
+}
+
+.journal-list {
+  list-style:none;
+  padding-left:0;
+}
+
+.journal-list li {
+  margin-bottom:4px;
+}
+
+.journal-list a {
   color:#000;
-  resize:none;
+  text-decoration:none;
+}
+
+.journal-list a:hover {
+  text-decoration:underline;
+}
+
+.journal-main {
+  flex:1;
+  overflow-y:auto;
+  padding-right:4px;
+}
+
+.journal-entry h2 {
+  font-size:14px;
+  margin-bottom:6px;
+}
+
+.journal-entry p {
+  font-size:12px;
+  line-height:1.45;
+  white-space:pre-wrap;
 }
 
 /* ===== TASKBAR ===== */
@@ -235,7 +257,7 @@ html, body { width: 100%; height: 100%; }
   display:none;
   justify-content:center;
   align-items:center;
-  z-index:99999;
+  z-index:999999; /* <- optional, just makes sure it's above everything */
   opacity: 0;
   transition: opacity 1.4s ease;
 }
@@ -546,14 +568,20 @@ html, body { width: 100%; height: 100%; }
 .xp-links li {
   margin: 4px 0;
 }
-
+/* Fix XP meta layout so lyrics don't collapse */
+.xp-meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
 /* Lyrics scroll box */
 .xp-lyrics-box {
   background: #ffffff;
   border: 2px inset #ccc;
   padding: 8px;
-  
-  max-height: 150px;
+  flex-grow: 1;       /* makes it expand properly */
+  min-height: 150px;  /* prevents collapsing */
+  max-height: 250px;  /* keeps XP look */
   overflow-y: auto;
 
   font-family: "Courier New", monospace;
@@ -590,8 +618,4 @@ html, body { width: 100%; height: 100%; }
 
   .taskbar { height:40px; }
   .clock { font-size:12px; }
-}
-/* Fix spacing above Lyrics header */
-.xp-meta h3.xp-subhead {
-  margin-top: 18px;   /* Increase as needed */
 }

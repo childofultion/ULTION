@@ -16,8 +16,8 @@ const taskbarTasks = document.getElementById('taskbar-tasks');
 const clockEl      = document.getElementById('clock');
 
 /* ====== URLs ====== */
-const STORE_URL = "https://liveoffsilence.com/COMING-SOON/"; // store redirect
-const HOME_URL  = "https://liveoffsilence.com";                               // shutdown -> home (null = none)
+const STORE_URL = "https://liveoffsilence.com/COMING-SOON/";
+const HOME_URL  = "https://liveoffsilence.com";
 
 let zTop = 1000;
 
@@ -35,42 +35,42 @@ tick();
 setInterval(tick, 1000);
 
 /* ========= Start menu toggle ========= */
-if (startBtn && startMenu) {
-  startBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    try { sfxClick.play(); } catch (_) {}
-    const shown = startMenu.style.display === 'flex';
-    startMenu.style.display = shown ? 'none' : 'flex';
-  });
-
-  document.addEventListener('click', (e) => {
-    if (!startMenu.contains(e.target) && e.target !== startBtn) {
-      startMenu.style.display = 'none';
-    }
-  });
-}
+startBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  try { sfxClick.play(); } catch (_) {}
+  startMenu.style.display = startMenu.style.display === 'flex' ? 'none' : 'flex';
+});
+document.addEventListener('click', (e) => {
+  if (!startMenu.contains(e.target) && e.target !== startBtn)
+    startMenu.style.display = 'none';
+});
 
 /* ========= Taskbar buttons ========= */
 function addTask(appId, iconSrc, label) {
-  if (document.getElementById('task-' + appId)) return; // no duplicates
+  if (document.getElementById('task-' + appId)) return;
+
   const btn = document.createElement('button');
   btn.id = 'task-' + appId;
   btn.className = 'task open';
   btn.innerHTML = `<img src="${iconSrc}" alt="" /> <span>${label}</span>`;
+
   btn.addEventListener('click', () => {
     const win = document.getElementById(appId);
     if (!win) return;
+
     const visible = win.classList.contains('active');
     if (visible) {
-      win.classList.remove('active'); // minimize
+      win.classList.remove('active');
       btn.classList.remove('open');
     } else {
-      openWindow(win);                // restore
+      openWindow(win);
       btn.classList.add('open');
     }
   });
+
   taskbarTasks.appendChild(btn);
 }
+
 function removeTask(appId) {
   const t = document.getElementById('task-' + appId);
   if (t) t.remove();
@@ -78,43 +78,35 @@ function removeTask(appId) {
 
 /* ========= Windows ========= */
 function openWindow(win) {
-  if (!win) return;
   try { sfxOpen.play(); } catch (_) {}
+
   win.classList.add('active');
   win.style.zIndex = ++zTop;
 
   const iconEl = document.querySelector(`.icon[data-window="${win.id}"] img`);
-  const label  = win.id.toUpperCase();
-  addTask(win.id, iconEl ? iconEl.src : 'images/tenebrous.png', label);
-  const tb = document.getElementById('task-' + win.id);
-  if (tb) tb.classList.add('open');
+  addTask(win.id, iconEl ? iconEl.src : 'images/tenebrous.png', win.id.toUpperCase());
 }
 
-/* Close buttons inside windows */
 document.querySelectorAll('.close-btn').forEach(btn => {
   btn.addEventListener('click', (e) => {
     try { sfxClose.play(); } catch (_) {}
     const win = e.target.closest('.window');
-    if (!win) return;
     win.classList.remove('active');
     removeTask(win.id);
   });
 });
 
-/* ========= Desktop icons / Start menu items ========= */
+/* ========= Launch icons ========= */
 function handleLaunch(id) {
   try { sfxClick.play(); } catch (_) {}
 
-  // STORE redirects
-  if (id === 'store' && STORE_URL) {
+  if (id === 'store') {
     window.location.href = STORE_URL;
     return;
   }
-
-  // Otherwise open window
   const win = document.getElementById(id);
   if (win) openWindow(win);
-  if (startMenu) startMenu.style.display = 'none';
+  startMenu.style.display = 'none';
 }
 
 icons.forEach(ic =>
@@ -124,7 +116,7 @@ document.querySelectorAll('.menu-app').forEach(btn =>
   btn.addEventListener('click', () => handleLaunch(btn.dataset.window))
 );
 
-/* ========= Draggable windows (title bar only) ========= */
+/* ========= Draggable windows ========= */
 windowsEls.forEach(win => {
   const bar = win.querySelector('.title-bar');
   if (!bar) return;
@@ -140,14 +132,15 @@ windowsEls.forEach(win => {
 
   document.addEventListener('mousemove', (e) => {
     if (!dragging) return;
+
     let x = e.clientX - offX;
     let y = e.clientY - offY;
+
     const maxX = window.innerWidth - win.offsetWidth;
-    const maxY = window.innerHeight - win.offsetHeight - 36; // above taskbar
-    x = Math.max(0, Math.min(x, maxX));
-    y = Math.max(0, Math.min(y, maxY));
-    win.style.left = x + 'px';
-    win.style.top  = y + 'px';
+    const maxY = window.innerHeight - win.offsetHeight - 36;
+
+    win.style.left = Math.max(0, Math.min(x, maxX)) + 'px';
+    win.style.top  = Math.max(0, Math.min(y, maxY)) + 'px';
   });
 
   document.addEventListener('mouseup', () => {
@@ -156,191 +149,101 @@ windowsEls.forEach(win => {
   });
 });
 
-/* ========= Shutdown ========= */
-if (shutdownBtn) {
-  shutdownBtn.addEventListener('click', () => {
-    try { sfxClick.play(); } catch (_) {}
-    fadeOutAudio(bgMusic, 1600);
-
-    shutdownScreen.style.display = 'flex';
-    const desktop = document.getElementById('desktop');
-    const taskbar = document.getElementById('taskbar');
-    desktop.style.transition = 'opacity 1.4s ease';
-    taskbar.style.transition  = 'opacity 1.4s ease';
-    if (startMenu) startMenu.style.transition = 'opacity 0.6s ease';
-
-    desktop.style.opacity = '0';
-    taskbar.style.opacity  = '0';
-    if (startMenu) startMenu.style.opacity = '0';
-
-    requestAnimationFrame(() => {
-      shutdownScreen.classList.add('show');
-    });
-
-    setTimeout(() => {
-      desktop.style.display = 'none';
-      taskbar.style.display = 'none';
-      if (startMenu) startMenu.style.display = 'none';
-    }, 1500);
-  });
-}
-
-/* ========= Notepad ========= */
-document.addEventListener('click', (e) => {
-  if (e.target && e.target.id === 'note-save') {
-    const noteArea = document.getElementById('note-text');
-    if (!noteArea) return;
-    const blob = new Blob([noteArea.value || ''], { type: 'text/plain' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'note.txt';
-    document.body.appendChild(a);
-    a.click();
-    URL.revokeObjectURL(a.href);
-    a.remove();
-  }
-
-  if (e.target && e.target.id === 'note-clear') {
-    const noteArea = document.getElementById('note-text');
-    if (noteArea) noteArea.value = '';
-  }
-});
-
-/* ========= Shutdown OK -> redirect ========= */
-if (shutdownOK) {
-  shutdownOK.addEventListener('click', () => {
-    window.location.href = "https://liveoffsilence.com";
-  });
-}
-
-/* ========= Audio helpers ========= */
+/* ========= Audio fade-out ========= */
 function fadeOutAudio(el, ms = 1200) {
   if (!el) return;
-  try {
-    const start = typeof el.volume === 'number' ? el.volume : 1;
-    const steps = 30;
-    const stepMs = ms / steps;
-    let i = 0;
-    const t = setInterval(() => {
-      i++;
-      el.volume = Math.max(0, start * (1 - i / steps));
-      if (i >= steps) { clearInterval(t); el.pause(); }
-    }, stepMs);
-  } catch (_) {}
-}
-
-/* ========= Boot screen music handling ========= */
-function primeBgMusicForAutoplay() {
-  const a = bgMusic;
-  if (!a) return;
-  try {
-    a.volume = 0;
-    a.muted = true;
-    a.play().catch(() => {
-      const resume = () => {
-        a.play().catch(()=>{});
-        document.removeEventListener('click', resume);
-      };
-      document.addEventListener('click', resume);
-    });
-  } catch (_) {}
-}
-function unmuteAndFadeBgMusic(targetVol = 0.25, fadeMs = 1200) {
-  const a = bgMusic;
-  if (!a) return;
+  const start = el.volume;
   const steps = 30;
-  const dt = fadeMs / steps;
-  a.muted = false;
+  const stepMs = ms / steps;
   let i = 0;
-  const from = typeof a.volume === 'number' ? a.volume : 0;
+
   const t = setInterval(() => {
     i++;
-    a.volume = from + (targetVol - from) * (i / steps);
-    if (i >= steps) clearInterval(t);
-  }, dt);
+    el.volume = Math.max(0, start * (1 - i / steps));
+    if (i >= steps) {
+      clearInterval(t);
+      el.pause();
+    }
+  }, stepMs);
 }
 
-/* ========= Boot screen timing ========= */
-(function initBoot(){
-  primeBgMusicForAutoplay();
+/* ========= Shutdown (FIXED) ========= */
+shutdownBtn.addEventListener('click', () => {
+  try { sfxClick.play(); } catch (_) {}
 
+  // Show the shutdown overlay and let the CSS handle the fade-in
+  shutdownScreen.style.display = 'flex';
+  // force a reflow so the transition always applies
+  void shutdownScreen.offsetWidth;
+  shutdownScreen.classList.add('show');
+
+  // Fade out the background music only
+  fadeOutAudio(bgMusic, 1600);
+});
+
+/* ========= Shutdown OK ========= */
+shutdownOK.addEventListener('click', () => {
+  window.location.href = HOME_URL;
+});
+
+/* ========= Boot screen ========= */
+(function initBoot(){
   const boot = document.getElementById('boot-screen');
   if (!boot) return;
 
-  const bgVideo = document.getElementById('bg-video');
-  const MIN_SHOW = 900;
-  const MAX_WAIT = 3000;
-  const start = performance.now();
+  // bgMusic is already autoplaying muted; unmute it shortly after boot starts
+  setTimeout(() => {
+    try {
+      bgMusic.volume = 1;
+    } catch (_) {}
+  }, 300);
 
-  let finished = false;
-  function endBoot() {
-    if (finished) return;
-    finished = true;
-    const elapsed = performance.now() - start;
-    const delay = Math.max(0, MIN_SHOW - elapsed);
+  setTimeout(() => {
+    boot.classList.add('hide');
     setTimeout(() => {
-      boot.classList.add('hide');
-      setTimeout(() => {
-        boot.style.display = 'none';
-        unmuteAndFadeBgMusic(0.25, 1200);
-      }, 650);
-    }, delay);
-  }
-
-  if (bgVideo && typeof bgVideo.readyState === 'number') {
-    if (bgVideo.readyState >= 2) {
-      endBoot();
-    } else {
-      const onReady = () => { endBoot(); cleanup(); };
-      const cleanup = () => {
-        bgVideo.removeEventListener('canplay', onReady);
-        bgVideo.removeEventListener('canplaythrough', onReady);
-        clearTimeout(fallback);
-      };
-      bgVideo.addEventListener('canplay', onReady, { once:true });
-      bgVideo.addEventListener('canplaythrough', onReady, { once:true });
-      var fallback = setTimeout(() => {
-        endBoot();
-        cleanup();
-      }, MAX_WAIT);
-    }
-  } else {
-    setTimeout(endBoot, MIN_SHOW);
-  }
+      boot.style.display = 'none';
+    }, 600);
+  }, 900);
 })();
+// ====== START MUSIC ON FIRST USER INTERACTION ======
+function startBgMusic() {
+  try {
+    bgMusic.currentTime = 0;  // always start from the beginning
+    bgMusic.volume = 1;
+    bgMusic.play();
+  } catch (_) {}
 
-/* ========= MUSIC TAB SWITCHING ========= */
+  document.removeEventListener('click', startBgMusic);
+  document.removeEventListener('keydown', startBgMusic);
+}
+
+document.addEventListener('click', startBgMusic);
+document.addEventListener('keydown', startBgMusic);
+/* ========= MUSIC tabs ========= */
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    const tabName = btn.dataset.tab;
+    const tab = btn.dataset.tab;
 
-    // switch tab button state
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
 
-    // switch tab content
     document.querySelectorAll('.tab-section').forEach(sec => sec.classList.remove('active'));
-    const target = document.getElementById('tab-' + tabName);
-    if (target) target.classList.add('active');
+    document.getElementById('tab-' + tab).classList.add('active');
   });
 });
 
-/* ===== DISCOVERY → GHOST PAGE SWITCHING ===== */
+/* ========= GHOST PAGE ========= */
 const ghostItem = document.getElementById("release-ghost");
 const ghostPage = document.getElementById("ghost-page");
 const musicMain = document.getElementById("music-main-view");
 const ghostBack = document.getElementById("ghost-back");
 
-if (ghostItem && ghostPage && musicMain) {
-  ghostItem.addEventListener("click", () => {
-    musicMain.classList.add("hidden");
-    ghostPage.classList.remove("hidden");
-  });
-}
+ghostItem.addEventListener("click", () => {
+  musicMain.classList.add("hidden");
+  ghostPage.classList.remove("hidden");
+});
 
-if (ghostBack && ghostPage && musicMain) {
-  ghostBack.addEventListener("click", () => {
-    ghostPage.classList.add("hidden");
-    musicMain.classList.remove("hidden");
-  });
-}
+ghostBack.addEventListener("click", () => {
+  ghostPage.classList.add("hidden");
+  musicMain.classList.remove("hidden");
+});
