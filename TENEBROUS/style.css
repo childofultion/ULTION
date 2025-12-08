@@ -619,3 +619,44 @@ html, body { width: 100%; height: 100%; }
   .taskbar { height:40px; }
   .clock { font-size:12px; }
 }
+/* ===== QUICK MOBILE STABILISER ===== */
+@media (max-width: 600px) {
+
+    /* Force all XP windows to fit on screen */
+    .window, .xp-window, .music-window {
+        width: 95vw !important;
+        max-width: 95vw !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+    }
+
+    /* Make inner content never overflow */
+    .window-content, .content, .music-content {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+        padding: 10px !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Resize images (like Ghost cover) */
+    img {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+
+    /* Lyrics / text boxes */
+    textarea, .lyrics, .lyrics-box {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+    }
+
+    /* Forward button reposition */
+    .forward-btn {
+        top: 8px !important;
+        right: 8px !important;
+        font-size: 12px !important;
+        padding: 4px 6px !important;
+    }
+}
