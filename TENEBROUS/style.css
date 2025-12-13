@@ -661,7 +661,7 @@ html, body {
   }
 
   .desktop {
-    background-image: url("images/wallpaper-mobile.jpg");
+    background-image: url("images/wallpaper-mobile.png");
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
