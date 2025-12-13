@@ -692,3 +692,42 @@ html, body {
     font-size: 12px;
   }
 }
+/* ===== MOBILE FIX: MUSIC > GHOST PAGE ===== */
+@media (max-width: 768px) {
+
+  /* Stack artwork above text */
+  .xp-frame-body {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* Center & slightly reduce artwork */
+  .xp-artwork-box {
+    width: 96px;
+    height: 96px;
+    margin: 0 auto;
+  }
+
+  .xp-artwork {
+    width: 96px;
+    height: 96px;
+  }
+
+  /* Make meta fill space cleanly */
+  .xp-meta {
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* Let lyrics scroll naturally on mobile */
+  .xp-lyrics-box {
+    max-height: none;
+    flex: 1;
+    min-height: 120px;
+  }
+
+  /* Slightly reduce title size for narrow screens */
+  .xp-title {
+    font-size: 16px;
+  }
+}
