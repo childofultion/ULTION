@@ -58,18 +58,19 @@
 <div id="terminal"></div>
 
 <script>
-// Terminal content
+/* ===== TERMINAL CONTENT ===== */
 const term = document.getElementById("terminal");
 const intro = "WELCOME TO ULTION";
 const pages = [
   { text:"ABOUT",     url:"/ABOUT/" },
   { text:"PROJECTS",  url:"/PROJECTS/" },
-  { text:"STORE", url:"/COMING-SOON/" },
+  { text:"STORE",     url:"/COMING-SOON/" },
   { text:"TENEBROUS", url:"/TENEBROUS/" }
 ];
 
 let i = 0;
 
+/* ===== INTRO ANIMATION ===== */
 function typeIntro() {
   if (i < intro.length) {
     term.textContent += intro[i++];
@@ -89,6 +90,7 @@ function deleteIntro(len) {
   }
 }
 
+/* ===== MENU TYPING ===== */
 function typeMenu(index) {
   if (index >= pages.length) return;
 
@@ -111,8 +113,25 @@ function typeCommand(element, text, j, done) {
   }
 }
 
-// Start animation
-typeIntro();
+/* ===== INSTANT MENU (NO ANIMATION) ===== */
+function renderMenuInstant() {
+  term.textContent = "";
+  pages.forEach(page => {
+    const cmd = document.createElement("div");
+    cmd.className = "command";
+    cmd.textContent = page.text;
+    cmd.addEventListener("click", () => window.location = page.url);
+    term.appendChild(cmd);
+  });
+}
+
+/* ===== START LOGIC ===== */
+if (sessionStorage.getItem("ultionIntroPlayed")) {
+  renderMenuInstant();
+} else {
+  sessionStorage.setItem("ultionIntroPlayed", "true");
+  typeIntro();
+}
 </script>
 
 <!-- ✅ Cleaner URL: removes /index.html from address bar -->
